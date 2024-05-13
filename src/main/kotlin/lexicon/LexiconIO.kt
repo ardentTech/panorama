@@ -21,7 +21,7 @@ private object IOSchema: JsonTransformingSerializer<LexiconIO.Schema>(LexiconIO.
 @Serializable
 data class LexiconIO(
     val description: String? = null,
-    val encoding: String,
+    val encoding: String, // TODO if only supporting JSON for now don't make public
     @Serializable(with = IOSchema::class) val schema: Schema? = null
 ) {
     // TODO add documentation pointing ide users to what implements this? same for others?

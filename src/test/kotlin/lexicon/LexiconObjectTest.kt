@@ -6,14 +6,14 @@ import kotlin.test.assertFailsWith
 
 class LexiconObjectTest: LexiconTest() {
 
+
     @Test
-    fun `deserialize ok `() {
+    fun `deserialize array property ok `() {
         val raw = """
 {
   "type": "object",
-  "required": ["seq", "labels"],
+  "required": ["labels"],
   "properties": {
-    "seq": { "type": "integer" },
     "labels": {
       "type": "array",
       "items": { "type": "ref", "ref": "com.atproto.label.defs#label" }
@@ -22,15 +22,79 @@ class LexiconObjectTest: LexiconTest() {
 }
         """.trimIndent()
         val parsed = LexiconObject(
-            required = listOf("seq", "labels"),
+            required = listOf("labels"),
             properties = mapOf(
-                "seq" to LexiconInteger(),
                 "labels" to LexiconArray(
                     items = LexiconRef(ref = "com.atproto.label.defs#label")
                 )
             )
         )
         assertEquals(parsed, json.decodeFromString(raw))
+    }
+
+    @Test
+    fun `deserialize blob property ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize boolean property ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize bytes property ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize cid-link property ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize integer property ok`() {
+        val raw = """
+{
+  "type": "object",
+  "required": ["seq"],
+  "properties": {
+    "seq": { "type": "integer" }
+  }
+}
+        """.trimIndent()
+        val parsed = LexiconObject(
+            required = listOf("seq"),
+            properties = mapOf(
+                "seq" to LexiconInteger(),
+            )
+        )
+        assertEquals(parsed, json.decodeFromString(raw))
+    }
+
+    @Test
+    fun `deserialize ref property ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize string property ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize unexpected property`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize union property ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize unknown property ok`() {
+        // TODO
     }
 
     @Test

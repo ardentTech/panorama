@@ -7,7 +7,54 @@ import kotlin.test.assertFailsWith
 class LexiconDocTest: LexiconTest() {
 
     @Test
-    fun `deserialize ok`() {
+    fun `can have at most one primary definition`() {
+        assertFailsWith<IllegalArgumentException> {
+            LexiconDoc.factory(
+                defs = mapOf(
+                    "one" to LexiconQuery(),
+                    "two" to LexiconQuery()
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `deserialize array defs ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize blob defs ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize boolean defs ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize bytes defs ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize cid-link defs ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize integer defs ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize object defs ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize procedure defs ok`() {
         val raw = """
 {
   "lexicon": 1,
@@ -53,15 +100,43 @@ class LexiconDocTest: LexiconTest() {
     }
 
     @Test
-    fun `can have at most one primary definition`() {
-        assertFailsWith<IllegalArgumentException> {
-            LexiconDoc.factory(
-                defs = mapOf(
-                    "one" to LexiconQuery(),
-                    "two" to LexiconQuery()
-                )
-            )
-        }
+    fun `deserialize query defs ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize record defs ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize ref defs ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize string defs ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize subscription defs ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize unexpected defs`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize union defs ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize unknown defs ok`() {
+        // TODO
     }
 
     @Test

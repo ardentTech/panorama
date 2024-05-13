@@ -40,6 +40,36 @@ class LexiconParamsTest: LexiconTest() {
     }
 
     @Test
+    fun `deserialize array property ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize boolean property ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize integer property ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize string property ok`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize unexpected property`() {
+        // TODO
+    }
+
+    @Test
+    fun `deserialize unknown property ok`() {
+        // TODO
+    }
+
+    @Test
     fun `required items must be property keys`() {
         assertFailsWith<IllegalArgumentException> {
             LexiconParams.factory(

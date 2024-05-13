@@ -12,6 +12,7 @@ repositories {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+    implementation("com.squareup:kotlinpoet:1.16.0")
 
     testImplementation(kotlin("test"))
 }

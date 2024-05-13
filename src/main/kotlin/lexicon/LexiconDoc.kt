@@ -10,14 +10,14 @@ private object LexiconDocDefs: JsonTransformingSerializer<Map<String, SchemaDef>
         val content = mutableMapOf<String, JsonElement>()
         element.jsonObject.map { (k, v) ->
             content[k] = JsonObject(v.jsonObject.toMutableMap().apply {
-                val type = this["type"]!!.jsonPrimitive.content
-                val serializerCls = when (type) {
+                val serializerCls = when (val type = this["type"]!!.jsonPrimitive.content) {
                     LexiconType.ARRAY -> LexiconArray::class
                     LexiconType.BLOB -> LexiconBlob::class
                     LexiconType.BOOLEAN -> LexiconBoolean::class
                     LexiconType.BYTES -> LexiconBytes::class
                     LexiconType.CID_LINK -> LexiconCidLink::class
                     LexiconType.INTEGER -> LexiconInteger::class
+                    LexiconType.OBJECT -> LexiconObject::class
                     LexiconType.PROCEDURE -> LexiconProcedure::class
                     LexiconType.QUERY -> LexiconQuery::class
                     LexiconType.RECORD -> LexiconRecord::class

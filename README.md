@@ -9,9 +9,6 @@ nature of current social media companies.
 Type definitions that are necessary for working with the AT Protocol's
 [Lexicon](https://atproto.com/specs/lexicon#lexicon) schema definition language.
 
-### XRPC Client
-TODO
-
 ## Author
 Jonathan D. Baker
 
