@@ -16,7 +16,7 @@ object Panorama {
 
     @OptIn(ExperimentalPathApi::class)
     fun codegen(
-        destination: Path = Path("./src/main/kotlin/gen"),
+        destination: Path = Path("./src/main/kotlin"),
         namespaces: List<String>,
         source: Path = Path("./data"),
     ) {
@@ -26,9 +26,7 @@ object Panorama {
 
         namespaces.forEach { namespace ->
             docs.filter { it.id.startsWith(namespace) }.forEach { doc ->
-                val docDestination = Path(base = destination.toString(), *doc.id.split(".").dropLast(1).toTypedArray())
-                docDestination.createDirectories()
-                doc.codegen(docDestination)
+                doc.codegen(destination)
             }
         }
     }

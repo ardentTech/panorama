@@ -147,4 +147,14 @@ class LexiconDocTest: LexiconTest() {
             )
         }
     }
+
+    @Test
+    fun `namespace ok`() {
+        val id = "foo.bar.testing.lexiconName"
+        val lex = LexiconDoc.factory(
+            defs = mapOf("one" to LexiconQuery()),
+            id = id
+        )
+        assertEquals(id.split(".").dropLast(1).joinToString("."), lex.namespace)
+    }
 }

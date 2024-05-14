@@ -54,4 +54,8 @@ data class LexiconDoc(
             }
         }
     }
+
+    // .*(?=\.)
+    val namespace: String?
+        get() = ".*(?=\\.)".toRegex().find(this.id)?.value
 }
