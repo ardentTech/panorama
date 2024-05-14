@@ -20,6 +20,7 @@ object Panorama {
         namespaces: List<String>,
         source: Path = Path("./data"),
     ) {
+        // TODO should this do `defs.json` first?
         val docs = source.walk(PathWalkOption.INCLUDE_DIRECTORIES).filter { it.extension == "json" }.map {
             json.decodeFromString<LexiconDoc>(it.readText())
         }.toList()
@@ -35,6 +36,6 @@ object Panorama {
 fun main() {
     Panorama.codegen(namespaces = listOf(
         "com.atproto",
-        "app.bsky"
+        //"app.bsky"
     ))
 }

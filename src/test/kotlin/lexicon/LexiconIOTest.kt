@@ -2,12 +2,26 @@ package lexicon
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class LexiconIOTest: LexiconTest() {
 
     @Test
     fun `deserialize ref schema ok`() {
-        // TODO
+        val raw = """
+{
+  "encoding": "application/json",
+  "schema": {
+    "type": "ref",
+    "ref": "com.atproto.admin.defs#accountView"
+  }
+}
+        """.trimIndent()
+        val parsed = LexiconIO(
+            encoding = "application/json",
+            schema = LexiconRef(ref = "com.atproto.admin.defs#accountView")
+        )
+        assertEquals(parsed, json.decodeFromString(raw))
     }
 
     @Test
@@ -40,11 +54,37 @@ class LexiconIOTest: LexiconTest() {
 
     @Test
     fun `deserialize unexpected schema type`() {
-        // TODO
+        assertFailsWith<IllegalArgumentException> {
+            val raw = """
+{
+  "encoding": "application/json",
+  "schema": {
+    "type": "boolean"
+  }
+}
+        """.trimIndent()
+            json.decodeFromString<LexiconIO>(raw)
+        }
     }
 
     @Test
     fun `deserialize union schema ok`() {
-        // TODO
+        val raw = """
+{
+  "encoding": "application/json",
+  "schema": {
+    "type": "union",
+    "refs": [
+      "chat.bsky.convo.defs#logBeginConvo",
+      "chat.bsky.convo.defs#logLeaveConvo"
+    ]
+  }
+}
+        """.trimIndent()
+        val parsed = LexiconIO(
+            encoding = "application/json",
+            schema = LexiconUnion(refs = listOf("chat.bsky.convo.defs#logBeginConvo", "chat.bsky.convo.defs#logLeaveConvo"))
+        )
+        assertEquals(parsed, json.decodeFromString(raw))
     }
 }

@@ -52,6 +52,7 @@ fun LexiconObject.codegen(name: String): TypeSpec {
                 )
             }
         }
+
         spec.addProperty(
             PropertySpec.builder(key, typeName).initializer(key).build()
         )
