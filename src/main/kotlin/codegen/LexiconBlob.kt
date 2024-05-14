@@ -3,15 +3,22 @@ package codegen
 import com.squareup.kotlinpoet.asTypeName
 import lexicon.LexiconBlob
 
-fun LexiconBlob.toPropertyConfig(): PropertyConfig<String> {
-    val validators = mutableListOf<Validator<String>>()
+fun LexiconBlob.toPropertyConfig(keyName: String): PropertyConfig<String> {
+
+    val validators = mutableListOf<String>()
     this.accept?.let {
-        validators.add { a -> a in it }
+        if (it.isNotEmpty()) {
+            validators.add("""
+require($keyName in listOf("${it.joinToString(separator = "\", \"")}"))            
+        """.trimIndent())
+        }
     }
-    // TODO this should be max size in bytes
     this.maxSize?.let {
-        validators.add { a -> a.count() <= it }
+        validators.add("""
+require($keyName.toByteArray().count() <= $it)            
+        """.trimIndent())
     }
+
 
     return PropertyConfig(
         const = null,

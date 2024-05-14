@@ -3,12 +3,12 @@ package codegen
 import com.squareup.kotlinpoet.*
 import lexicon.*
 
-fun LexiconParams.Property.toPropertyConfig(): PropertyConfig<*> {
+fun LexiconParams.Property.toPropertyConfig(keyName: String): PropertyConfig<*> {
     return when (this) {
         is LexiconBoolean -> this.toPropertyConfig()
-        is LexiconInteger -> this.toPropertyConfig()
-        is LexiconString -> this.toPropertyConfig()
-        // TODO unknown
+        is LexiconInteger -> this.toPropertyConfig(keyName)
+        is LexiconString -> this.toPropertyConfig(keyName)
+        is LexiconUnknown -> this.toPropertyConfig()
         else -> throw IllegalArgumentException("TODO")
     }
 }
@@ -22,7 +22,7 @@ fun LexiconParams.codegen(name: String): TypeSpec {
     val constructorBuilder = FunSpec.constructorBuilder()
 
     this.properties.forEach { (key, value) ->
-        val config = value.toPropertyConfig()
+        val config = value.toPropertyConfig(key)
 
         // validators
         if (config.validators.isNotEmpty()) {

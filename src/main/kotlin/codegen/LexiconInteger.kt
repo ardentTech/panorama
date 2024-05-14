@@ -3,16 +3,24 @@ package codegen
 import com.squareup.kotlinpoet.asTypeName
 import lexicon.LexiconInteger
 
-fun LexiconInteger.toPropertyConfig(): PropertyConfig<Int> {
-    val validators = mutableListOf<Validator<Int>>()
+fun LexiconInteger.toPropertyConfig(keyName: String): PropertyConfig<Int> {
+    val validators = mutableListOf<String>()
     this.enum?.let {
-        validators.add { a -> a in it }
+        if (it.isNotEmpty()) {
+            validators.add("""
+require($keyName in listOf("${it.joinToString(separator = "\", \"")}"))            
+        """.trimIndent())
+        }
     }
     this.maximum?.let {
-        validators.add { a -> a <= it }
+        validators.add("""
+require($keyName <= $it)
+        """.trimIndent())
     }
     this.minimum?.let {
-        validators.add { a -> a >= it }
+        validators.add("""
+require($keyName >= $it)
+        """.trimIndent())
     }
 
     return PropertyConfig(

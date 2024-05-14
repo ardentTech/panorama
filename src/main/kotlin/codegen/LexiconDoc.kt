@@ -2,22 +2,14 @@ package codegen
 
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeSpec
-import lexicon.LexiconDoc
-import lexicon.LexiconProcedure
-import lexicon.LexiconQuery
-import lexicon.SchemaDef
+import lexicon.*
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.Path
 
-fun String.capitalize(): String {
-    return this.replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
-    }
-}
-
 fun SchemaDef.codegen(name: String): List<TypeSpec> {
     return when (this) {
+        is LexiconObject -> listOf(this.codegen(name)) // TODO hmmm needs a `defs` type to wrap multiple objects?
         is LexiconProcedure -> this.codegen(name)
         is LexiconQuery -> this.codegen(name)
         // TODO object, query, record, subscription...
@@ -29,10 +21,13 @@ fun LexiconDoc.codegen(destination: Path) {
     var description: String? = null
     val rootName = this.id.split(".").last().capitalize()
     val specs = mutableListOf<TypeSpec>()
-    println("rootName: $rootName")
 
     this.defs.forEach { (name, def) ->
-        specs += def.codegen(if (name == "main") rootName else "$rootName${name.capitalize()}")
+        println("def: $name")
+        specs += def.codegen(
+            if (name == "main") rootName
+            else if (rootName == "Defs") name.capitalize()
+            else "$rootName${name.capitalize()}")
         if (name == "main") description = def.description
     }
 
@@ -47,6 +42,7 @@ ${description?.let { "Description: $it" }}
                         """.trimIndent())
         // TODO build dirs to match package name
         specs.forEach { file.addType(it) }
+        // TODO return spec instead of writing file here
         file.build().writeTo(destination)
     }
 }

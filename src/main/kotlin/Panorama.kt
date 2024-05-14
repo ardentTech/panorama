@@ -14,28 +14,29 @@ object Panorama {
         }
     }
 
-    // fun codegen(source: Path, destination: Path) {}
-    // prefixes: ["app.bsky", "com.atproto", "tools.ozone"]
-    // rust Vec.push - appends an element to the back of a collection
-    // rust Trait std::iter::Extend - extend a collection with contents of an iterator
-    // rust quote! macro - turn Rust syntax tree data structures into tokens of source code
-
     @OptIn(ExperimentalPathApi::class)
     fun codegen(
         destination: Path = Path("./src/main/kotlin/gen"),
         namespaces: List<String>,
-        source: String = "./data",
+        source: Path = Path("./data"),
     ) {
-        destination.deleteRecursively()
-        destination.createDirectory()
-        val docs = Path(source).walk(PathWalkOption.INCLUDE_DIRECTORIES).filter { it.extension == "json" }.map { json.decodeFromString<LexiconDoc>(it.readText()) }.toList()
+        val docs = source.walk(PathWalkOption.INCLUDE_DIRECTORIES).filter { it.extension == "json" }.map {
+            json.decodeFromString<LexiconDoc>(it.readText())
+        }.toList()
 
         namespaces.forEach { namespace ->
-            docs.filter { it.id.startsWith(namespace) }.forEach { doc -> doc.codegen(destination) }
+            docs.filter { it.id.startsWith(namespace) }.forEach { doc ->
+                val docDestination = Path(base = destination.toString(), *doc.id.split(".").dropLast(1).toTypedArray())
+                docDestination.createDirectories()
+                doc.codegen(docDestination)
+            }
         }
     }
 }
 
 fun main() {
-    Panorama.codegen(namespaces = listOf("com.atproto"))
+    Panorama.codegen(namespaces = listOf(
+        "com.atproto",
+        "app.bsky"
+    ))
 }

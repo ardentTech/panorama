@@ -16,5 +16,6 @@ data class PropertyConfig<T: Any>(
     //val type: KClass<T>,
     val typeName: TypeName,
     // these go in init
-    val validators: List<Validator<T>> = emptyList()
+    val validators: List<String> = emptyList()
+    //val validators: List<Validator<T>> = emptyList()
 )
