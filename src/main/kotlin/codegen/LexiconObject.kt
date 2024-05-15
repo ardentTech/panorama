@@ -6,12 +6,14 @@ import lexicon.*
 // could be leaner but explicit it nice for now
 fun LexiconObject.Property.toPropertyConfig(keyName: String): PropertyConfig<*> {
     return when (this) {
+        // TODO don't all of these need the keyName?
         is LexiconArray -> this.toPropertyConfig()
         is LexiconBlob -> this.toPropertyConfig(keyName)
         is LexiconBoolean -> this.toPropertyConfig()
         is LexiconInteger -> this.toPropertyConfig(keyName)
         is LexiconRef -> this.toPropertyConfig()
         is LexiconString -> this.toPropertyConfig(keyName)
+        is LexiconUnion -> this.toPropertyConfig()
         is LexiconUnknown -> this.toPropertyConfig()
         // TODO bytes, cid-link
         else -> throw IllegalArgumentException("TODO LexiconObject.Property.toPropertyConfig(): $this")
@@ -21,11 +23,11 @@ fun LexiconObject.Property.toPropertyConfig(keyName: String): PropertyConfig<*> 
 // TODO what to do about `required`? express rules in unit tests...
 // TODO if not required, set to null? could this conflict with `nullable`?
 fun LexiconObject.codegen(name: String): TypeSpec {
-    println("LexiconObject.codegen: $name")
     require(this.properties.isNotEmpty())
 
     val spec = TypeSpec.dataclass(name)
     val constructorBuilder = FunSpec.constructorBuilder()
+    val validators = mutableListOf<String>()
 
     this.properties.forEach { (key, value) ->
         val config = value.toPropertyConfig(key)
@@ -38,35 +40,31 @@ fun LexiconObject.codegen(name: String): TypeSpec {
 
         // const + default
         if (config.const == null) {
-            println("const is null for $key")
-            if (config.default == null) {
-                println("default is null for $key")
-                constructorBuilder.addParameter(key, typeName)
-            } else {
-                println("default is not null for $key")
-                constructorBuilder.addParameter(
-                    ParameterSpec
-                        .builder(key, typeName)
-                        .defaultValue("%L", config.default)
-                        .build()
-                )
+            val param = ParameterSpec.builder(key, typeName)
+            if (config.default != null) {
+                param.defaultValue(
+                    if (typeName.toString() == "kotlin.String") "%S" else "%L", config.default)
             }
-        }
+            constructorBuilder.addParameter(param.build())
+        } // TODO else
 
         spec.addProperty(
             PropertySpec.builder(key, typeName).initializer(key).build()
         )
 
-        // validators - this must come after initializing data class values to avoid weirdness
-        if (config.validators.isNotEmpty()) {
-            val initBuilder = CodeBlock.builder()
-            config.validators.forEach {
-                initBuilder.addStatement(it)
-            }
-            spec.addInitializerBlock(initBuilder.build())
-        }
+        validators += config.validators
     }
 
     spec.primaryConstructor(constructorBuilder.build())
+
+    // must finish building constructor before introducing init block
+    if (validators.isNotEmpty()) {
+        val initBuilder = CodeBlock.builder()
+        validators.forEach {
+            initBuilder.addStatement(it)
+        }
+        spec.addInitializerBlock(initBuilder.build())
+    }
+
     return spec.build()
 }

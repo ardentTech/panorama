@@ -3,9 +3,8 @@ package codegen
 import com.squareup.kotlinpoet.asTypeName
 import lexicon.*
 
-// TODO: maxGraphemes, minGraphemes, knownValues
+// TODO: maxGraphemes, minGraphemes
 fun LexiconString.toPropertyConfig(keyName: String): PropertyConfig<String> {
-    println("LexiconString.toPropertyConfig()")
     val validators = mutableListOf<String>()
     this.enum?.let {
         if (it.isNotEmpty()) {

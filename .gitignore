@@ -5,6 +5,7 @@ build/
 !**/src/test/**/build/
 data/
 src/main/kotlin/gen/
+src/main/kotlin/com/
 
 ### IntelliJ IDEA ###
 .idea
