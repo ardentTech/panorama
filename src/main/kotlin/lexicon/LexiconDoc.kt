@@ -24,6 +24,7 @@ private object LexiconDocDefs: JsonTransformingSerializer<Map<String, SchemaDef>
                     LexiconType.REF -> LexiconRef::class
                     LexiconType.STRING -> LexiconString::class
                     LexiconType.SUBSCRIPTION -> LexiconSubscription::class
+                    LexiconType.TOKEN -> LexiconToken::class
                     LexiconType.UNION -> LexiconUnion::class
                     LexiconType.UNKNOWN -> LexiconUnknown::class
                     else -> throw IllegalArgumentException("Unexpected type: $type")

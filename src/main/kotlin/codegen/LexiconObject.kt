@@ -10,13 +10,13 @@ fun LexiconObject.Property.toPropertyConfig(keyName: String): PropertyConfig<*> 
         is LexiconArray -> this.toPropertyConfig()
         is LexiconBlob -> this.toPropertyConfig(keyName)
         is LexiconBoolean -> this.toPropertyConfig()
+        is LexiconBytes -> this.toPropertyConfig(keyName)
+        is LexiconCidLink -> this.toPropertyConfig(keyName)
         is LexiconInteger -> this.toPropertyConfig(keyName)
         is LexiconRef -> this.toPropertyConfig()
         is LexiconString -> this.toPropertyConfig(keyName)
         is LexiconUnion -> this.toPropertyConfig()
         is LexiconUnknown -> this.toPropertyConfig()
-        // TODO bytes, cid-link
-        else -> throw IllegalArgumentException("TODO LexiconObject.Property.toPropertyConfig(): $this")
     }
 }
 
@@ -41,9 +41,9 @@ fun LexiconObject.codegen(name: String): TypeSpec {
         // const + default
         if (config.const == null) {
             val param = ParameterSpec.builder(key, typeName)
-            if (config.default != null) {
+            config.default?.let {
                 param.defaultValue(
-                    if (typeName.toString() == "kotlin.String") "%S" else "%L", config.default)
+                    if (typeName.toString() == "kotlin.String") "%S" else "%L", it)
             }
             constructorBuilder.addParameter(param.build())
         } // TODO else
