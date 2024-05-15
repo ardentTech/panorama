@@ -7,66 +7,130 @@ import kotlin.test.assertFailsWith
 class LexiconParamsTest: LexiconTest() {
 
     @Test
-    fun `deserialize ok`() {
+    fun `deserialize array property ok`() {
         val raw = """
 {
   "type": "params",
-  "required": ["feed"],
   "properties": {
-    "feed": { "type": "string", "format": "at-uri" },
     "limit": {
-      "type": "integer",
-      "minimum": 1,
-      "maximum": 100,
-      "default": 50
-    },
-    "cursor": { "type": "string" }
+      "type": "array",
+      "items": {
+        "type": "blob"
+      }
+    }
   }
 }
         """.trimIndent()
         val parsed = LexiconParams(
             properties = mapOf(
-                "feed" to LexiconString(format = LexiconString.Format.AT_URI),
-                "limit" to LexiconInteger(
-                    default = 50,
-                    maximum = 100,
-                    minimum = 1,
-                ),
-                "cursor" to LexiconString()
-            ),
-            required = listOf("feed")
+                "limit" to LexiconArray(
+                    items = LexiconBlob()
+                )
+            )
         )
         assertEquals(parsed, json.decodeFromString(raw))
     }
 
     @Test
-    fun `deserialize array property ok`() {
-        // TODO
-    }
-
-    @Test
     fun `deserialize boolean property ok`() {
-        // TODO
+        val raw = """
+{
+  "type": "params",
+  "properties": {
+    "limit": {
+      "type": "boolean"
+    }
+  }
+}
+        """.trimIndent()
+        val parsed = LexiconParams(
+            properties = mapOf(
+                "limit" to LexiconBoolean()
+            )
+        )
+        assertEquals(parsed, json.decodeFromString(raw))
     }
 
     @Test
     fun `deserialize integer property ok`() {
-        // TODO
+        val raw = """
+{
+  "type": "params",
+  "properties": {
+    "limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100,
+      "default": 50
+    }
+  }
+}
+        """.trimIndent()
+        val parsed = LexiconParams(
+            properties = mapOf(
+                "limit" to LexiconInteger(
+                    default = 50,
+                    maximum = 100,
+                    minimum = 1,
+                )
+            )
+        )
+        assertEquals(parsed, json.decodeFromString(raw))
     }
 
     @Test
     fun `deserialize string property ok`() {
-        // TODO
+        val raw = """
+{
+  "type": "params",
+  "properties": {
+    "feed": { "type": "string", "format": "at-uri" }
+  }
+}
+        """.trimIndent()
+        val parsed = LexiconParams(
+            properties = mapOf(
+                "feed" to LexiconString(format = LexiconString.Format.AT_URI)
+            )
+        )
+        assertEquals(parsed, json.decodeFromString(raw))
     }
 
     @Test
     fun `deserialize unexpected property`() {
-        // TODO
+        assertFailsWith<IllegalArgumentException> {
+            val raw = """
+{
+  "type": "params",
+  "properties": {
+    "limit": {
+      "type": "invalid"
+    }
+  }
+}
+        """.trimIndent()
+            json.decodeFromString<LexiconParams>(raw)
+        }
     }
 
     @Test
     fun `deserialize unknown property ok`() {
-        // TODO
+        val raw = """
+{
+  "type": "params",
+  "properties": {
+    "limit": {
+      "type": "unknown"
+    }
+  }
+}
+        """.trimIndent()
+        val parsed = LexiconParams(
+            properties = mapOf(
+                "limit" to LexiconUnknown()
+            )
+        )
+        assertEquals(parsed, json.decodeFromString(raw))
     }
 
     @Test

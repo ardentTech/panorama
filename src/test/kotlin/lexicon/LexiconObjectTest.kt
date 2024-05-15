@@ -6,7 +6,6 @@ import kotlin.test.assertFailsWith
 
 class LexiconObjectTest: LexiconTest() {
 
-
     @Test
     fun `deserialize array property ok `() {
         val raw = """
@@ -34,22 +33,74 @@ class LexiconObjectTest: LexiconTest() {
 
     @Test
     fun `deserialize blob property ok`() {
-        // TODO
+        val raw = """
+{
+  "type": "object",
+  "properties": {
+    "foobar": {
+      "type": "blob"
+    }
+  }
+}
+        """.trimIndent()
+        val parsed = LexiconObject(
+            properties = mapOf("foobar" to LexiconBlob())
+        )
+        assertEquals(parsed, json.decodeFromString(raw))
     }
 
     @Test
     fun `deserialize boolean property ok`() {
-        // TODO
+        val raw = """
+{
+  "type": "object",
+  "properties": {
+    "foobar": {
+      "type": "boolean"
+    }
+  }
+}
+        """.trimIndent()
+        val parsed = LexiconObject(
+            properties = mapOf("foobar" to LexiconBoolean())
+        )
+        assertEquals(parsed, json.decodeFromString(raw))
     }
 
     @Test
     fun `deserialize bytes property ok`() {
-        // TODO
+        val raw = """
+{
+  "type": "object",
+  "properties": {
+    "foobar": {
+      "type": "bytes"
+    }
+  }
+}
+        """.trimIndent()
+        val parsed = LexiconObject(
+            properties = mapOf("foobar" to LexiconBytes())
+        )
+        assertEquals(parsed, json.decodeFromString(raw))
     }
 
     @Test
     fun `deserialize cid-link property ok`() {
-        // TODO
+        val raw = """
+{
+  "type": "object",
+  "properties": {
+    "foobar": {
+      "type": "cid-link"
+    }
+  }
+}
+        """.trimIndent()
+        val parsed = LexiconObject(
+            properties = mapOf("foobar" to LexiconCidLink())
+        )
+        assertEquals(parsed, json.decodeFromString(raw))
     }
 
     @Test
@@ -74,12 +125,39 @@ class LexiconObjectTest: LexiconTest() {
 
     @Test
     fun `deserialize ref property ok`() {
-        // TODO
+        val raw = """
+{
+  "type": "object",
+  "properties": {
+    "foobar": {
+      "type": "ref",
+      "ref": "chat.bsky.convo.defs#logBeginConvo"
+    }
+  }
+}
+        """.trimIndent()
+        val parsed = LexiconObject(
+            properties = mapOf("foobar" to LexiconRef(ref = "chat.bsky.convo.defs#logBeginConvo"))
+        )
+        assertEquals(parsed, json.decodeFromString(raw))
     }
 
     @Test
     fun `deserialize string property ok`() {
-        // TODO
+        val raw = """
+{
+  "type": "object",
+  "properties": {
+    "foobar": {
+      "type": "string"
+    }
+  }
+}
+        """.trimIndent()
+        val parsed = LexiconObject(
+            properties = mapOf("foobar" to LexiconString())
+        )
+        assertEquals(parsed, json.decodeFromString(raw))
     }
 
     @Test
@@ -89,12 +167,46 @@ class LexiconObjectTest: LexiconTest() {
 
     @Test
     fun `deserialize union property ok`() {
-        // TODO
+        val raw = """
+{
+  "type": "object",
+  "properties": {
+    "foobar": {
+      "type": "union",
+      "refs": [
+        "chat.bsky.convo.defs#logBeginConvo",
+        "chat.bsky.convo.defs#logLeaveConvo"
+      ]
+    }
+  }
+}
+        """.trimIndent()
+        val parsed = LexiconObject(
+            properties = mapOf("foobar" to LexiconUnion(
+                refs = listOf(
+                    "chat.bsky.convo.defs#logBeginConvo",
+                    "chat.bsky.convo.defs#logLeaveConvo"
+                )
+            ))
+        )
+        assertEquals(parsed, json.decodeFromString(raw))
     }
 
     @Test
     fun `deserialize unknown property ok`() {
-        // TODO
+        assertFailsWith<IllegalArgumentException> {
+            val raw = """
+{
+  "type": "object",
+  "properties": {
+    "foobar": {
+      "type": "invalid"
+    }
+  }
+}
+            """.trimIndent()
+            json.decodeFromString<LexiconObject>(raw)
+        }
     }
 
     @Test
