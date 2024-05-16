@@ -3,20 +3,19 @@ package codegen
 import com.squareup.kotlinpoet.*
 import lexicon.*
 
-// could be leaner but explicit it nice for now
+// could be leaner but explicit is nice for now
 fun LexiconObject.Property.toPropertyConfig(keyName: String): PropertyConfig<*> {
     return when (this) {
-        // TODO don't all of these need the keyName?
-        is LexiconArray -> this.toPropertyConfig()
+        is LexiconArray -> this.toPropertyConfig(keyName)
         is LexiconBlob -> this.toPropertyConfig(keyName)
-        is LexiconBoolean -> this.toPropertyConfig()
+        is LexiconBoolean -> this.toPropertyConfig(keyName)
         is LexiconBytes -> this.toPropertyConfig(keyName)
         is LexiconCidLink -> this.toPropertyConfig(keyName)
         is LexiconInteger -> this.toPropertyConfig(keyName)
-        is LexiconRef -> this.toPropertyConfig()
+        is LexiconRef -> this.toPropertyConfig(keyName)
         is LexiconString -> this.toPropertyConfig(keyName)
-        is LexiconUnion -> this.toPropertyConfig()
-        is LexiconUnknown -> this.toPropertyConfig()
+        is LexiconUnion -> this.toPropertyConfig(keyName)
+        is LexiconUnknown -> this.toPropertyConfig(keyName)
     }
 }
 
@@ -29,6 +28,8 @@ fun LexiconObject.codegen(name: String): TypeSpec {
     val constructorBuilder = FunSpec.constructorBuilder()
     val validators = mutableListOf<String>()
 
+    this.description?.let { spec.addKdoc(it) }
+
     this.properties.forEach { (key, value) ->
         val config = value.toPropertyConfig(key)
 
@@ -38,7 +39,7 @@ fun LexiconObject.codegen(name: String): TypeSpec {
             config.typeName
         }
 
-        // const + default
+        // const
         config.const?.let { const ->
             spec.addProperty(
                 PropertySpec.builder(key, typeName)
@@ -46,6 +47,7 @@ fun LexiconObject.codegen(name: String): TypeSpec {
                     .build()
             )
         } ?: run {
+            // default
             val param = ParameterSpec.builder(key, typeName)
             config.default?.let {
                 param.defaultValue(

@@ -5,12 +5,11 @@ import lexicon.*
 
 fun LexiconParams.Property.toPropertyConfig(keyName: String): PropertyConfig<*> {
     return when (this) {
-        // TODO don't all of these need the keyName?
-        is LexiconArray -> this.toPropertyConfig()
-        is LexiconBoolean -> this.toPropertyConfig()
+        is LexiconArray -> this.toPropertyConfig(keyName)
+        is LexiconBoolean -> this.toPropertyConfig(keyName)
         is LexiconInteger -> this.toPropertyConfig(keyName)
         is LexiconString -> this.toPropertyConfig(keyName)
-        is LexiconUnknown -> this.toPropertyConfig()
+        is LexiconUnknown -> this.toPropertyConfig(keyName)
     }
 }
 

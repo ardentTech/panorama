@@ -8,7 +8,7 @@ import lexicon.LexiconRecord
 fun LexiconRecord.codegen(name: String): TypeSpec {
     val spec = TypeSpec.dataclass(name)
 
-    // TODO description
+    this.description?.let { spec.addKdoc(it) }
 
     spec.primaryConstructor(
         FunSpec.constructorBuilder()

@@ -5,7 +5,7 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.asTypeName
 import lexicon.LexiconArray
 
-fun LexiconArray.toPropertyConfig(): PropertyConfig<String> {
+fun LexiconArray.toPropertyConfig(keyName: String): PropertyConfig<String> {
     return PropertyConfig(
         const = null,
         default = null,

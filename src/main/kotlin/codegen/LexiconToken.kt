@@ -4,9 +4,8 @@ import com.squareup.kotlinpoet.*
 import lexicon.LexiconToken
 import java.util.*
 
-// TODO description
 fun LexiconToken.codegen(className: String): TypeSpec {
-    return TypeSpec.objectBuilder(className)
+    val spec = TypeSpec.objectBuilder(className)
         .addProperty(
             PropertySpec.builder("code", String::class)
                 .initializer("%S", className.replaceFirstChar {
@@ -15,5 +14,8 @@ fun LexiconToken.codegen(className: String): TypeSpec {
                 })
                 .build()
         )
-        .build()
+
+    this.description?.let { spec.addKdoc(it) }
+
+    return spec.build()
 }

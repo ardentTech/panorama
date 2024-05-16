@@ -3,11 +3,11 @@ package codegen
 import com.squareup.kotlinpoet.asTypeName
 import lexicon.LexiconUnknown
 
-// TODO decide what to do here
-fun LexiconUnknown.toPropertyConfig(): PropertyConfig<String> {
+fun LexiconUnknown.toPropertyConfig(keyName: String): PropertyConfig<String> {
     return PropertyConfig(
         const = null,
         default = null,
+        // TODO decide what to do here
         typeName = Unit::class.asTypeName()
     )
 }
