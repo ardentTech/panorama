@@ -39,18 +39,23 @@ fun LexiconObject.codegen(name: String): TypeSpec {
         }
 
         // const + default
-        if (config.const == null) {
+        config.const?.let { const ->
+            spec.addProperty(
+                PropertySpec.builder(key, typeName)
+                    .initializer("%L", const)
+                    .build()
+            )
+        } ?: run {
             val param = ParameterSpec.builder(key, typeName)
             config.default?.let {
                 param.defaultValue(
                     if (typeName.toString() == "kotlin.String") "%S" else "%L", it)
             }
             constructorBuilder.addParameter(param.build())
-        } // TODO else
-
-        spec.addProperty(
-            PropertySpec.builder(key, typeName).initializer(key).build()
-        )
+            spec.addProperty(
+                PropertySpec.builder(key, typeName).initializer(key).build()
+            )
+        }
 
         validators += config.validators
     }

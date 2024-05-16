@@ -8,8 +8,8 @@ import java.util.*
 
 // TODO create abstraction over typespec details with own API
 internal fun TypeSpec.Companion.dataclass(name: String): TypeSpec.Builder {
-    return TypeSpec.classBuilder(name)
-        .addAnnotation(Serializable::class)
+    return classBuilder(name)
+        .addAnnotation(Serializable::class) // TODO is this needed?
         .addModifiers(KModifier.DATA)
 }
 

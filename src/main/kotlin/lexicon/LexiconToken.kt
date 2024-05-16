@@ -2,6 +2,8 @@ package lexicon
 
 import kotlinx.serialization.Serializable
 
+// Tokens declare global identifiers which can be used in data.
+
 // https://atproto.com/specs/lexicon#token
 @Serializable
 data class LexiconToken(

@@ -13,6 +13,8 @@ repositories {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("com.squareup:kotlinpoet:1.16.0")
+    implementation("org.slf4j:slf4j-simple:2.0.3")
+    implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
 
     testImplementation(kotlin("test"))
 }

@@ -6,6 +6,7 @@ build/
 data/
 src/main/kotlin/gen/
 src/main/kotlin/com/
+src/main/kotlin/app/
 
 ### IntelliJ IDEA ###
 .idea

@@ -11,7 +11,6 @@ fun LexiconParams.Property.toPropertyConfig(keyName: String): PropertyConfig<*> 
         is LexiconInteger -> this.toPropertyConfig(keyName)
         is LexiconString -> this.toPropertyConfig(keyName)
         is LexiconUnknown -> this.toPropertyConfig()
-        else -> throw IllegalArgumentException("TODO LexiconParams.Property.toPropertyConfig(): $this")
     }
 }
 
@@ -28,18 +27,23 @@ fun LexiconParams.codegen(name: String): TypeSpec {
         val config = value.toPropertyConfig(key)
 
         // const + default
-        if (config.const == null) {
+        config.const?.let { const ->
+            spec.addProperty(
+                PropertySpec.builder(key, config.typeName)
+                    .initializer("%L", const)
+                    .build()
+            )
+        } ?: run {
             val param = ParameterSpec.builder(key, config.typeName)
             config.default?.let {
                 param.defaultValue(
                     if (config.typeName.toString() == "kotlin.String") "%S" else "%L", it)
             }
             constructorBuilder.addParameter(param.build())
-        } // TODO else
-
-        spec.addProperty(
-            PropertySpec.builder(key, config.typeName).initializer(key).build()
-        )
+            spec.addProperty(
+                PropertySpec.builder(key, config.typeName).initializer(key).build()
+            )
+        }
 
         validators += config.validators
     }
