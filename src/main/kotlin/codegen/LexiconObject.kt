@@ -1,6 +1,7 @@
 package codegen
 
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import lexicon.*
 
 // could be leaner but explicit is nice for now
@@ -33,10 +34,18 @@ fun LexiconObject.codegen(name: String): TypeSpec {
     this.properties.forEach { (key, value) ->
         val config = value.toPropertyConfig(key)
 
-        val typeName = if (this.nullable?.contains(key) == true) {
-            config.typeName.copy(nullable = true)
+        // TODO find better way to do equality check
+        val typeName = if (config.cls.simpleName == "List") {
+            // TODO not a fan
+            val parts = config.itemCls!!.qualifiedName!!.split(".")
+            val packageName = parts.slice(0..(parts.count() - 2)).joinToString(".")
+
+            config.cls.asTypeName().parameterizedBy(
+                ClassName(packageName, parts.last())
+                    .copy(nullable = this.nullable?.contains(key) == true)
+            )
         } else {
-            config.typeName
+            config.cls.asTypeName().copy(nullable = this.nullable?.contains(key) == true)
         }
 
         // const

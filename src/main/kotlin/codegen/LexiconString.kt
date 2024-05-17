@@ -41,8 +41,9 @@ require(${keyName.count()} >= $it)
     } ?: String::class.asTypeName()
 
     return PropertyConfig(
+        cls = String::class,
         const = this.const,
         default = this.default,
-        typeName = typeName
+        //typeName = typeName
     )
 }

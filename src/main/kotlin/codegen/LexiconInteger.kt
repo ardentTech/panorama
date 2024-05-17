@@ -24,9 +24,10 @@ require($keyName >= $it)
     }
 
     return PropertyConfig(
+        cls = Int::class,
         const = this.const,
         default = this.default,
-        typeName = Int::class.asTypeName(),
+        //typeName = Int::class.asTypeName(),
         validators = validators,
     )
 }

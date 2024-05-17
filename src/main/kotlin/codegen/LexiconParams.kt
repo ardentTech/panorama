@@ -24,23 +24,26 @@ fun LexiconParams.codegen(name: String): TypeSpec {
 
     this.properties.forEach { (key, value) ->
         val config = value.toPropertyConfig(key)
+        val typeName = config.cls.asTypeName()
+
+        println("string: ${config.cls}")
 
         // const + default
         config.const?.let { const ->
             spec.addProperty(
-                PropertySpec.builder(key, config.typeName)
+                PropertySpec.builder(key, typeName)
                     .initializer("%L", const)
                     .build()
             )
         } ?: run {
-            val param = ParameterSpec.builder(key, config.typeName)
+            val param = ParameterSpec.builder(key, typeName)
             config.default?.let {
                 param.defaultValue(
-                    if (config.typeName.toString() == "kotlin.String") "%S" else "%L", it)
+                    if (typeName.toString() == "kotlin.String") "%S" else "%L", it)
             }
             constructorBuilder.addParameter(param.build())
             spec.addProperty(
-                PropertySpec.builder(key, config.typeName).initializer(key).build()
+                PropertySpec.builder(key, typeName).initializer(key).build()
             )
         }
 

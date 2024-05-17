@@ -17,9 +17,10 @@ require(${keyName.count()} >= $it)
     }
 
     return PropertyConfig(
+        cls = String::class,
         const = null,
         default = null,
-        typeName = String::class.asTypeName(),
+        //typeName = String::class.asTypeName(),
         validators = validators
     )
 }
