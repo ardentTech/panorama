@@ -1,6 +1,7 @@
 package codegen
 
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import lexicon.*
 
 fun LexiconParams.Property.toPropertyConfig(keyName: String): PropertyConfig<*> {
@@ -22,13 +23,21 @@ fun LexiconParams.codegen(name: String): TypeSpec {
     val constructorBuilder = FunSpec.constructorBuilder()
     val validators = mutableListOf<String>()
 
+    this.description?.let { spec.addKdoc(it) }
+
     this.properties.forEach { (key, value) ->
         val config = value.toPropertyConfig(key)
-        val typeName = config.cls.asTypeName()
 
-        println("string: ${config.cls}")
+        val typeName = if (config.cls == List::class) {
+            // TODO not a fan
+            val parts = config.itemCls!!.qualifiedName!!.split(".")
+            val packageName = parts.slice(0..(parts.count() - 2)).joinToString(".")
 
-        // const + default
+            config.cls.asTypeName().parameterizedBy(ClassName(packageName, parts.last()))
+        } else {
+            config.cls.asTypeName()
+        }
+
         config.const?.let { const ->
             spec.addProperty(
                 PropertySpec.builder(key, typeName)
@@ -36,10 +45,11 @@ fun LexiconParams.codegen(name: String): TypeSpec {
                     .build()
             )
         } ?: run {
+            // default
             val param = ParameterSpec.builder(key, typeName)
             config.default?.let {
                 param.defaultValue(
-                    if (typeName.toString() == "kotlin.String") "%S" else "%L", it)
+                    if (config.cls == String::class) "%S" else "%L", it)
             }
             constructorBuilder.addParameter(param.build())
             spec.addProperty(

@@ -34,8 +34,7 @@ fun LexiconObject.codegen(name: String): TypeSpec {
     this.properties.forEach { (key, value) ->
         val config = value.toPropertyConfig(key)
 
-        // TODO find better way to do equality check
-        val typeName = if (config.cls.simpleName == "List") {
+        val typeName = if (config.cls == List::class) {
             // TODO not a fan
             val parts = config.itemCls!!.qualifiedName!!.split(".")
             val packageName = parts.slice(0..(parts.count() - 2)).joinToString(".")
@@ -60,7 +59,7 @@ fun LexiconObject.codegen(name: String): TypeSpec {
             val param = ParameterSpec.builder(key, typeName)
             config.default?.let {
                 param.defaultValue(
-                    if (typeName.toString() == "kotlin.String") "%S" else "%L", it)
+                    if (config.cls == String::class) "%S" else "%L", it)
             }
             constructorBuilder.addParameter(param.build())
             spec.addProperty(
