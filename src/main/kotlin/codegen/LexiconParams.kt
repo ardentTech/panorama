@@ -26,38 +26,41 @@ fun LexiconParams.codegen(name: String): TypeSpec {
     this.description?.let { spec.addKdoc(it) }
 
     this.properties.forEach { (key, value) ->
-        val config = value.toPropertyConfig(key)
+        // TODO skip until decide how to handle unknown
+        if (value !is LexiconUnknown) {
+            val config = value.toPropertyConfig(key)
 
-        val typeName = if (config.cls == List::class) {
-            // TODO not a fan
-            val parts = config.itemCls!!.qualifiedName!!.split(".")
-            val packageName = parts.slice(0..(parts.count() - 2)).joinToString(".")
+            val typeName = if (config.cls == List::class) {
+                // TODO not a fan
+                val parts = config.itemCls!!.qualifiedName!!.split(".")
+                val packageName = parts.slice(0..(parts.count() - 2)).joinToString(".")
 
-            config.cls.asTypeName().parameterizedBy(ClassName(packageName, parts.last()))
-        } else {
-            config.cls.asTypeName()
-        }
-
-        config.const?.let { const ->
-            spec.addProperty(
-                PropertySpec.builder(key, typeName)
-                    .initializer("%L", const)
-                    .build()
-            )
-        } ?: run {
-            // default
-            val param = ParameterSpec.builder(key, typeName)
-            config.default?.let {
-                param.defaultValue(
-                    if (config.cls == String::class) "%S" else "%L", it)
+                config.cls.asTypeName().parameterizedBy(ClassName(packageName, parts.last()))
+            } else {
+                config.cls.asTypeName()
             }
-            constructorBuilder.addParameter(param.build())
-            spec.addProperty(
-                PropertySpec.builder(key, typeName).initializer(key).build()
-            )
-        }
 
-        validators += config.validators
+            config.const?.let { const ->
+                spec.addProperty(
+                    PropertySpec.builder(key, typeName)
+                        .initializer("%L", const)
+                        .build()
+                )
+            } ?: run {
+                // default
+                val param = ParameterSpec.builder(key, typeName)
+                config.default?.let {
+                    param.defaultValue(
+                        if (config.cls == String::class) "%S" else "%L", it)
+                }
+                constructorBuilder.addParameter(param.build())
+                spec.addProperty(
+                    PropertySpec.builder(key, typeName).initializer(key).build()
+                )
+            }
+
+            validators += config.validators
+        }
     }
 
     spec.primaryConstructor(constructorBuilder.build())
