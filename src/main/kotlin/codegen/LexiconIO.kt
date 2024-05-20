@@ -1,6 +1,5 @@
 package codegen
 
-import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import lexicon.LexiconIO
 import lexicon.LexiconObject
@@ -15,12 +14,12 @@ fun LexiconIO.codegen(name: String): TypeSpec {
             else -> throw IllegalArgumentException("TODO LexiconIO.codegen() name: $name / schema: ${this.schema}")
         }
     } ?: run {
-        TypeSpec.objectBuilder(name)
-            .addProperty(
-                PropertySpec.builder("encoding", String::class)
-                    .initializer("%S", this.encoding)
-                    .build()
+        generateKObject(
+            KObjectConfig(
+                name = name, properties = listOf(
+                    KBodyPropertyConfig(cls = String::class, name = "encoding", value = this.encoding,)
+                )
             )
-        .build()
+        )
     }
 }

@@ -6,7 +6,6 @@ import lexicon.LexiconRef
 // TODO this should refer to another data class (the func body below is pseudo-code)
 // TODO use a typealias? https://square.github.io/kotlinpoet/type-aliases/
 fun LexiconRef.codegen(name: String): TypeSpec {
-    //val demo = TypeAliasSpec.builder("Word", String::class).build()
     return TypeSpec.dataclass(name)
         .primaryConstructor(
             FunSpec.constructorBuilder()
