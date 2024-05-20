@@ -4,11 +4,28 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class CodeGeneratorTest {
+class KObjectTest {
 
-    // KDataClass
+    @Test
+    fun `gen output kdoc is present if not null`() {
+        val config = KObjectConfig(
+            description = "this is a test",
+            name = "foobar",
+            properties = listOf(KBodyPropertyConfig(cls = String::class, name = "foo", value = "bar"))
+        )
+        assertEquals(
+            """
+/**
+ * this is a test
+ */
+public data object foobar {
+  public val foo: kotlin.String = "bar"
+}
 
-    // KObject
+            """.trimIndent(),
+            generateKObject(config).toString())
+    }
+
     @Test
     fun `config properties cannot be empty`() {
         assertFailsWith<IllegalArgumentException> {
@@ -50,26 +67,6 @@ public data object foobar {
   public val foo: kotlin.String = "bar"
 
   public val bar: kotlin.Int = 8
-}
-
-            """.trimIndent(),
-            generateKObject(config).toString())
-    }
-
-    @Test
-    fun `gen output kdoc is present if not null`() {
-        val config = KObjectConfig(
-            description = "this is a test",
-            name = "foobar",
-            properties = listOf(KBodyPropertyConfig(cls = String::class, name = "foo", value = "bar"))
-        )
-        assertEquals(
-            """
-/**
- * this is a test
- */
-public data object foobar {
-  public val foo: kotlin.String = "bar"
 }
 
             """.trimIndent(),

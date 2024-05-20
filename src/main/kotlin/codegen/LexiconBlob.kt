@@ -1,5 +1,6 @@
 package codegen
 
+import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.asTypeName
 import lexicon.LexiconBlob
 
