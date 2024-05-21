@@ -10,9 +10,5 @@ fun String.camelToEnumCase(): String {
 }
 
 fun List<LexiconError>.codegen(name: String): TypeSpec {
-    val spec = TypeSpec.enumBuilder("${name}Errors")
-    this.forEach { error ->
-        spec.addEnumConstant(error.name.camelToEnumCase())
-    }
-    return spec.build()
+    return generateKEnum(name, this.map { it.name.camelToEnumCase() })
 }

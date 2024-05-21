@@ -19,11 +19,10 @@ fun LexiconRef.codegen(name: String): TypeSpec {
 }
 
 // TODO this should nest another data class
-fun LexiconRef.toPropertyConfig(keyName: String): PropertyConfig<String> {
-    return PropertyConfig(
+internal fun LexiconRef.toPropertyConfig(name: String, isNullable: Boolean = false): KConstructorPropertyConfig<String> {
+    return KConstructorPropertyConfig(
         cls = String::class,
-        const = null,
-        default = null,
-        //typeName = ClassName("", this.ref.javaClass.kotlin.qualifiedName!!)
+        isNullable = isNullable,
+        name = name,
     )
 }

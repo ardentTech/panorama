@@ -1,33 +1,41 @@
 package codegen
 
-import com.squareup.kotlinpoet.asTypeName
 import lexicon.LexiconInteger
 
-fun LexiconInteger.toPropertyConfig(keyName: String): PropertyConfig<Int> {
+internal fun LexiconInteger.toPropertyConfig(name: String, isNullable: Boolean = false): KPropertyConfig<Int> {
+    val cls = Int::class
     val validators = mutableListOf<String>()
+
     this.enum?.let {
         if (it.isNotEmpty()) {
             validators.add("""
-require($keyName in listOf("${it.joinToString(separator = "\", \"")}"))            
+require($name in listOf("${it.joinToString(separator = "\", \"")}"))
         """.trimIndent())
         }
     }
     this.maximum?.let {
         validators.add("""
-require($keyName <= $it)
+require($name <= $it)
         """.trimIndent())
     }
     this.minimum?.let {
         validators.add("""
-require($keyName >= $it)
+require($name >= $it)
         """.trimIndent())
     }
 
-    return PropertyConfig(
-        cls = Int::class,
-        const = this.const,
-        default = this.default,
-        //typeName = Int::class.asTypeName(),
-        validators = validators,
+    return this.const?.let {
+        KBodyPropertyConfig(
+            cls = cls,
+            isNullable = isNullable,
+            name = name,
+            value = it
+        )
+    } ?: KConstructorPropertyConfig(
+        cls = cls,
+        defaultValue = this.default,
+        isNullable = isNullable,
+        name = name,
+        validators = validators
     )
 }

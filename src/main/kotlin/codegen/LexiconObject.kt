@@ -1,88 +1,40 @@
 package codegen
 
 import com.squareup.kotlinpoet.*
-import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import lexicon.*
 
-// could be leaner but explicit is nice for now
-fun LexiconObject.Property.toPropertyConfig(keyName: String): PropertyConfig<*> {
+internal fun LexiconObject.Property.toConfig(name: String, isNullable: Boolean): KPropertyConfig<*> {
     return when (this) {
-        is LexiconArray -> this.toPropertyConfig(keyName)
-        is LexiconBlob -> this.toPropertyConfig(keyName)
-        is LexiconBoolean -> this.toPropertyConfig(keyName)
-        is LexiconBytes -> this.toPropertyConfig(keyName)
-        is LexiconCidLink -> this.toPropertyConfig(keyName)
-        is LexiconInteger -> this.toPropertyConfig(keyName)
-        is LexiconRef -> this.toPropertyConfig(keyName)
-        is LexiconString -> this.toPropertyConfig(keyName)
-        is LexiconUnion -> this.toPropertyConfig(keyName)
-        is LexiconUnknown -> this.toPropertyConfig(keyName)
+        is LexiconArray -> this.toPropertyConfig(name, isNullable)
+        is LexiconBlob -> this.toPropertyConfig(name, isNullable)
+        is LexiconBoolean -> this.toPropertyConfig(name, isNullable)
+        is LexiconBytes -> this.toPropertyConfig(name, isNullable)
+        is LexiconCidLink -> this.toPropertyConfig(name, isNullable)
+        is LexiconInteger -> this.toPropertyConfig(name, isNullable)
+        is LexiconRef -> this.toPropertyConfig(name, isNullable)
+        is LexiconString -> this.toPropertyConfig(name, isNullable)
+        is LexiconUnion -> this.toPropertyConfig(name, isNullable)
+        is LexiconUnknown -> this.toPropertyConfig(name, isNullable)
     }
 }
 
-// TODO what to do about `required`? express rules in unit tests...
-// TODO if not required, set to null? could this conflict with `nullable`?
-fun LexiconObject.codegen(name: String): TypeSpec {
-    require(this.properties.isNotEmpty())
-
-    val spec = TypeSpec.dataclass(name)
-    val constructorBuilder = FunSpec.constructorBuilder()
-    val validators = mutableListOf<String>()
-
-    this.description?.let { spec.addKdoc(it) }
+internal fun LexiconObject.codegen(name: String): TypeSpec {
+    val bodyProperties = mutableListOf<KBodyPropertyConfig<out Any>>()
+    val constructorProperties = mutableListOf<KConstructorPropertyConfig<out Any>>()
 
     this.properties.forEach { (key, value) ->
-        // TODO skip until decide how to handle unknown
-        if (value !is LexiconUnknown) {
-            val config = value.toPropertyConfig(key)
-
-            val typeName = if (config.cls == List::class) {
-                // TODO not a fan
-                val parts = config.itemCls!!.qualifiedName!!.split(".")
-                val packageName = parts.slice(0..(parts.count() - 2)).joinToString(".")
-
-                config.cls.asTypeName().parameterizedBy(
-                    ClassName(packageName, parts.last())
-                        .copy(nullable = this.nullable?.contains(key) == true)
-                )
-            } else {
-                config.cls.asTypeName().copy(nullable = this.nullable?.contains(key) == true)
-            }
-
-            // const
-            config.const?.let { const ->
-                spec.addProperty(
-                    PropertySpec.builder(key, typeName)
-                        .initializer("%L", const)
-                        .build()
-                )
-            } ?: run {
-                // default
-                val param = ParameterSpec.builder(key, typeName)
-                config.default?.let {
-                    param.defaultValue(
-                        if (config.cls == String::class) "%S" else "%L", it)
-                }
-                constructorBuilder.addParameter(param.build())
-                spec.addProperty(
-                    PropertySpec.builder(key, typeName).initializer(key).build()
-                )
-            }
-
-            validators += config.validators
+        when(val config = value.toConfig(key, this.nullable?.contains(key) == true )) {
+            is KBodyPropertyConfig<*> -> bodyProperties.add(config)
+            is KConstructorPropertyConfig<*> -> constructorProperties.add(config)
         }
     }
 
-    spec.primaryConstructor(constructorBuilder.build())
-
-    // must finish building constructor before introducing init block
-    if (validators.isNotEmpty()) {
-        val initBuilder = CodeBlock.builder()
-        validators.forEach {
-            initBuilder.addStatement(it)
-        }
-        spec.addInitializerBlock(initBuilder.build())
-    }
-
-    return spec.build()
+    return generateKDataClass(
+        KDataClassConfig(
+            bodyProperties = bodyProperties,
+            constructorProperties = constructorProperties,
+            description = this.description,
+            name = name
+        )
+    )
 }

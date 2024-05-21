@@ -51,6 +51,7 @@ internal fun generateKDataClass(config: KDataClassConfig): TypeSpec {
     // must finish building constructor before introducing this init block
     if (validators.isNotEmpty()) {
         val initBuilder = CodeBlock.builder()
+        // TODO could this automatically add "require(...)"?
         validators.forEach { initBuilder.addStatement(it) }
         spec.addInitializerBlock(initBuilder.build())
     }

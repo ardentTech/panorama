@@ -1,13 +1,20 @@
 package codegen
 
-import com.squareup.kotlinpoet.asTypeName
 import lexicon.LexiconBoolean
 
-fun LexiconBoolean.toPropertyConfig(keyName: String): PropertyConfig<Boolean> {
-    return PropertyConfig(
-        cls = Boolean::class,
-        const = this.const,
-        default = this.default,
-        //typeName = Boolean::class.asTypeName()
+internal fun LexiconBoolean.toPropertyConfig(name: String, isNullable: Boolean = false): KPropertyConfig<Boolean> {
+    val cls = Boolean::class
+    return this.const?.let {
+        KBodyPropertyConfig(
+            cls = cls,
+            isNullable = isNullable,
+            name = name,
+            value = it
+        )
+    } ?: KConstructorPropertyConfig(
+        cls = cls,
+        defaultValue = this.default,
+        isNullable = isNullable,
+        name = name,
     )
 }

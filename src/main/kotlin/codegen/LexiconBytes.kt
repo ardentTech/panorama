@@ -1,26 +1,24 @@
 package codegen
 
-import com.squareup.kotlinpoet.asTypeName
 import lexicon.LexiconBytes
 
-fun LexiconBytes.toPropertyConfig(keyName: String): PropertyConfig<String> {
+internal fun LexiconBytes.toPropertyConfig(name: String, isNullable: Boolean = false): KConstructorPropertyConfig<String> {
     val validators = mutableListOf<String>()
     this.maxLength?.let {
         validators.add("""
-require(${keyName.count()} <= $it)
+require(${name.count()} <= $it)
         """.trimIndent())
     }
     this.minLength?.let {
         validators.add("""
-require(${keyName.count()} >= $it)
+require(${name.count()} >= $it)
         """.trimIndent())
     }
 
-    return PropertyConfig(
+    return KConstructorPropertyConfig(
         cls = String::class,
-        const = null,
-        default = null,
-        //typeName = String::class.asTypeName(),
+        isNullable = isNullable,
+        name = name,
         validators = validators
     )
 }

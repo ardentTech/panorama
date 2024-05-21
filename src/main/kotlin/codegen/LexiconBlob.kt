@@ -1,31 +1,27 @@
 package codegen
 
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.asTypeName
 import lexicon.LexiconBlob
 
-fun LexiconBlob.toPropertyConfig(keyName: String): PropertyConfig<String> {
+internal fun LexiconBlob.toPropertyConfig(name: String, isNullable: Boolean = false): KPropertyConfig<String> {
 
     val validators = mutableListOf<String>()
     this.accept?.let {
         if (it.isNotEmpty()) {
             validators.add("""
-require($keyName in listOf("${it.joinToString(separator = "\", \"")}"))            
+require($name in listOf("${it.joinToString(separator = "\", \"")}"))            
         """.trimIndent())
         }
     }
     this.maxSize?.let {
         validators.add("""
-require($keyName.toByteArray().count() <= $it)            
+require($name.toByteArray().count() <= $it)            
         """.trimIndent())
     }
 
-
-    return PropertyConfig(
+    return KConstructorPropertyConfig(
         cls = String::class,
-        const = null,
-        default = null,
-        //typeName = String::class.asTypeName(),
+        isNullable = isNullable,
+        name = name,
         validators = validators
     )
 }

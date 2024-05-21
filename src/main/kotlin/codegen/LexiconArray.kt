@@ -2,12 +2,10 @@ package codegen
 
 import lexicon.*
 
-fun LexiconArray.toPropertyConfig(keyName: String): PropertyConfig<List<*>> {
-    return PropertyConfig(
+internal fun LexiconArray.toPropertyConfig(name: String, isNullable: Boolean = false): KPropertyConfig<List<*>> {
+    return KConstructorPropertyConfig(
         cls = List::class,
-        const = null,
-        default = null,
-        // TODO should this map to Kotlin primitives instead of Lexicon<...> types?
+        isNullable = isNullable,
         itemCls = when(this.items) {
             is LexiconBlob -> String::class
             is LexiconBoolean -> Boolean::class
@@ -18,6 +16,7 @@ fun LexiconArray.toPropertyConfig(keyName: String): PropertyConfig<List<*>> {
             is LexiconString -> String::class
             is LexiconUnion -> String::class
             is LexiconUnknown -> String::class
-        }
+        },
+        name = name
     )
 }

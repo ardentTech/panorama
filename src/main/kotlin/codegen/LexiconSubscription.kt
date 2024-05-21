@@ -16,7 +16,7 @@ fun LexiconSubscription.codegen(name: String): List<TypeSpec> {
     // this is the output from the web socket
 
     this.errors?.let {
-        specs += it.codegen(name)
+        specs += it.codegen("${name}Errors")
     }
 
     return specs.toList()

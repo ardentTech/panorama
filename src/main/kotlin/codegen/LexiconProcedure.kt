@@ -17,7 +17,7 @@ fun LexiconProcedure.codegen(name: String): List<TypeSpec> {
     }
 
     this.errors?.let {
-        specs += it.codegen(name)
+        specs += it.codegen("${name}Errors")
     }
 
     return specs.toList()
