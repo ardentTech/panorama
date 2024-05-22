@@ -9,7 +9,7 @@ class KDataClassTest {
     fun `gen output kdoc is present if not null`() {
         val config = KDataClassConfig(
             constructorProperties = listOf(
-                KConstructorPropertyConfig(
+                KPropConfig(
                     cls = String::class,
                     name = "testing"
                 )
@@ -35,7 +35,7 @@ public data class Foobar(
     fun `constructor property is nullable`() {
         val config = KDataClassConfig(
             constructorProperties = listOf(
-                KConstructorPropertyConfig(
+                KPropConfig(
                     cls = String::class,
                     isNullable = true,
                     name = "testing"
@@ -58,7 +58,7 @@ public data class Foobar(
     fun `constructor property is not nullable`() {
         val config = KDataClassConfig(
             constructorProperties = listOf(
-                KConstructorPropertyConfig(
+                KPropConfig(
                     cls = String::class,
                     isNullable = false,
                     name = "testing"
@@ -81,7 +81,7 @@ public data class Foobar(
     fun `constructor property with default value`() {
         val config = KDataClassConfig(
             constructorProperties = listOf(
-                KConstructorPropertyConfig(
+                KPropConfig(
                     cls = String::class,
                     defaultValue = "bar",
                     name = "testing"
@@ -104,7 +104,7 @@ public data class Foo(
     fun `constructor property without default value`() {
         val config = KDataClassConfig(
             constructorProperties = listOf(
-                KConstructorPropertyConfig(
+                KPropConfig(
                     cls = String::class,
                     defaultValue = null,
                     name = "testing"
@@ -127,7 +127,7 @@ public data class Foo(
     fun `constructor property with validator`() {
         val config = KDataClassConfig(
             constructorProperties = listOf(
-                KConstructorPropertyConfig(
+                KPropConfig(
                     cls = Int::class,
                     isNullable = false,
                     name = "count",
@@ -155,15 +155,15 @@ public data class Foobar(
     fun `body property is nullable`() {
         val config = KDataClassConfig(
             bodyProperties = listOf(
-                KBodyPropertyConfig(
+                KPropConfig(
                     cls = Boolean::class,
                     isNullable = true,
                     name = "isOk",
-                    value = true
+                    constantValue = true
                 )
             ),
             constructorProperties = listOf(
-                KConstructorPropertyConfig(
+                KPropConfig(
                     cls = String::class,
                     defaultValue = "bar",
                     name = "testing"
@@ -188,15 +188,15 @@ public data class Foo(
     fun `body property is not nullable`() {
         val config = KDataClassConfig(
             bodyProperties = listOf(
-                KBodyPropertyConfig(
+                KPropConfig(
                     cls = Boolean::class,
                     isNullable = false,
                     name = "isOk",
-                    value = true
+                    constantValue = true
                 )
             ),
             constructorProperties = listOf(
-                KConstructorPropertyConfig(
+                KPropConfig(
                     cls = String::class,
                     defaultValue = "bar",
                     name = "testing"

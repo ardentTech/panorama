@@ -9,12 +9,14 @@ import kotlin.io.path.*
 
 private val logger = KotlinLogging.logger {}
 private const val JSON_FILE_EXT = "json"
+private const val LEXICON_SOURCE_DIR = "./data"
+private const val SERIALIZER_CLASS_DISCRIMINATOR = "discriminator"
 
 object Panorama {
 
     private val json by lazy {
         Json {
-            classDiscriminator = "discriminator"
+            classDiscriminator = SERIALIZER_CLASS_DISCRIMINATOR
             classDiscriminatorMode = ClassDiscriminatorMode.NONE
         }
     }
@@ -30,7 +32,7 @@ object Panorama {
     }
 
     @OptIn(ExperimentalPathApi::class)
-    fun crawl(namespaces: List<String>, source: Path = Path("./data")): Result<List<LexiconDoc>> =
+    fun crawl(namespaces: List<String> = emptyList(), source: Path = Path(LEXICON_SOURCE_DIR)): Result<List<LexiconDoc>> =
         try {
             val docs = source.walk(PathWalkOption.INCLUDE_DIRECTORIES).filter { it.extension == JSON_FILE_EXT }.map {
                 json.decodeFromString<LexiconDoc>(it.readText())
@@ -43,9 +45,16 @@ object Panorama {
 
 fun main() {
     Panorama.crawl(namespaces = listOf(
-        //"com.atproto",
-        "app.bsky.actor",
-        "app.bsky.embed",
+//        "com.atproto.admin",
+//        "com.atproto.identity",
+//        "com.atproto.label",
+//        "com.atproto.moderation",
+//        "com.atproto.repo",
+//        "com.atproto.server",
+//        "com.atproto.sync",
+//        "com.atproto.temp",
+//        "app.bsky.actor",
+//        "app.bsky.embed",
         "app.bsky.feed"
     )).fold(
         onSuccess = { docs -> docs.forEach { Panorama.codegen(it) }},

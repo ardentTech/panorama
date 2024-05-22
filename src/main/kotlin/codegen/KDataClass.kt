@@ -7,8 +7,8 @@ import kotlin.reflect.KClass
 
 // TODO constructorProperties cannot be empty
 internal data class KDataClassConfig(
-    val bodyProperties: List<KBodyPropertyConfig<out Any>> = emptyList(),
-    val constructorProperties: List<KConstructorPropertyConfig<out Any>>,
+    val bodyProperties: List<KPropConfig<out Any>> = emptyList(),
+    val constructorProperties: List<KPropConfig<out Any>>,
     val description: String? = null,
     val name: String
 )
@@ -41,7 +41,7 @@ internal fun generateKDataClass(config: KDataClassConfig): TypeSpec {
         val typeName = typeNameFor(it.cls, it.itemCls, it.isNullable)
         spec.addProperty(
             PropertySpec.builder(it.name, typeName)
-                .initializer(formatterFor(it.cls), it.value)
+                .initializer(formatterFor(it.cls), it.constantValue)
                 .build()
         )
     }
