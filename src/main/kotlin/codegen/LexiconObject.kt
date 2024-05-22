@@ -4,7 +4,7 @@ import com.squareup.kotlinpoet.*
 import lexicon.*
 
 internal fun LexiconObject.codegen(name: String): TypeSpec {
-    val propConfigs = this.properties.map { (key, value) -> KPropConfig.from(value, this.nullable?.contains(key) == true, key) }
+    val propConfigs = this.properties.map { (key, value) -> KPropConfigMapper.from(value, this.nullable?.contains(key) == true, key) }
     return generateKDataClass(
         KDataClassConfig(
             bodyProperties = propConfigs.filter { it.constantValue != null },
