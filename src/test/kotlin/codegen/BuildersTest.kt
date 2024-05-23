@@ -1,5 +1,6 @@
 package codegen
 
+import codegen.kotlinpoet.formatterFor
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -60,6 +61,42 @@ class BuildersTest {
     }
 
     @Test
+    fun `buildParameter, string, default null, nullable false`() {
+        assertEquals("""
+            |foo: kotlin.String
+            """.trimMargin(),
+            codegen.kotlinpoet.buildParameter(String::class, default = null, isNullable = false, name = "foo").toString()
+        )
+    }
+
+    @Test
+    fun `buildParameter, string, default not null, nullable false`() {
+        assertEquals("""
+            |foo: kotlin.String = "bar"
+            """.trimMargin(),
+            codegen.kotlinpoet.buildParameter(String::class, default = "bar", isNullable = false, name = "foo").toString()
+        )
+    }
+
+    @Test
+    fun `buildParameter, string, default null, nullable true`() {
+        assertEquals("""
+            |foo: kotlin.String?
+            """.trimMargin(),
+            codegen.kotlinpoet.buildParameter(String::class, default = null, isNullable = true, name = "foo").toString()
+        )
+    }
+
+    @Test
+    fun `buildParameter, string, default not null, nullable true`() {
+        assertEquals("""
+            |foo: kotlin.String? = "bar"
+            """.trimMargin(),
+            codegen.kotlinpoet.buildParameter(String::class, default = "bar", isNullable = true, name = "foo").toString()
+        )
+    }
+
+    @Test
     fun `buildProperty no value`() {
         assertEquals("""
             |val foo: kotlin.String
@@ -87,5 +124,15 @@ class BuildersTest {
             """.trimMargin(),
             codegen.kotlinpoet.buildProperty(Int::class, "foo", 8).toString()
         )
+    }
+
+    @Test
+    fun `formatterFor string`() {
+        assertEquals("%S", formatterFor(String::class))
+    }
+
+    @Test
+    fun `formatterFor not string`() {
+        assertEquals("%L", formatterFor(Int::class))
     }
 }
