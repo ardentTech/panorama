@@ -5,13 +5,14 @@ import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.*
 
+private const val TOO_MANY_PRIMARY_DEFS = "A Lexicon cannot have more than one primary definition."
+
 private object LexiconDocDefs: JsonTransformingSerializer<Map<String, SchemaDef>>(MapSerializer(String.serializer(), SchemaDef.serializer())) {
     override fun transformDeserialize(element: JsonElement): JsonElement {
         val content = mutableMapOf<String, JsonElement>()
         element.jsonObject.map { (k, v) ->
             content[k] = JsonObject(v.jsonObject.toMutableMap().apply {
-                val type = this["type"]!!.jsonPrimitive.content
-                val serializerCls = when (type) {
+                val serializerCls = when (val type = this["type"]!!.jsonPrimitive.content) {
                     LexiconType.ARRAY -> LexiconArray::class
                     LexiconType.BLOB -> LexiconBlob::class
                     LexiconType.BOOLEAN -> LexiconBoolean::class
@@ -50,8 +51,11 @@ data class LexiconDoc(
         defs.forEach {
             if (it.value is SchemaDef.PrimaryType) {
                 primaryDefs++
-                if (primaryDefs > 1) { throw IllegalArgumentException("Can have at most one primary definition") }
+                if (primaryDefs > 1) { throw IllegalArgumentException(TOO_MANY_PRIMARY_DEFS) }
             }
         }
     }
+
+    val namespace: String?
+        get() = ".*(?=\\.)".toRegex().find(this.id)?.value
 }
