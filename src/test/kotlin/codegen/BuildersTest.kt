@@ -58,4 +58,34 @@ class BuildersTest {
             codegen.kotlinpoet.buildEnum(listOf("ONE", "TWO", "THREE"), description = "foobar", name = "TestEnum").toString()
         )
     }
+
+    @Test
+    fun `buildProperty no value`() {
+        assertEquals("""
+            |val foo: kotlin.String
+            |
+            """.trimMargin(),
+            codegen.kotlinpoet.buildProperty(String::class, "foo").toString()
+        )
+    }
+
+    @Test
+    fun `buildProperty string value`() {
+        assertEquals("""
+            |val foo: kotlin.String = "bar"
+            |
+            """.trimMargin(),
+            codegen.kotlinpoet.buildProperty(String::class, "foo", "bar").toString()
+        )
+    }
+
+    @Test
+    fun `buildProperty not string value`() {
+        assertEquals("""
+            |val foo: kotlin.Int = 8
+            |
+            """.trimMargin(),
+            codegen.kotlinpoet.buildProperty(Int::class, "foo", 8).toString()
+        )
+    }
 }
