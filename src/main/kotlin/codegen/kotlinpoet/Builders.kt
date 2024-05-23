@@ -1,6 +1,7 @@
 package codegen.kotlinpoet
 
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import kotlin.reflect.KClass
 
 // these functions aim to provide a more friendly API for building KotlinPoet specs
@@ -18,6 +19,10 @@ internal fun buildEnum(constants: List<String>, description: String? = null, nam
     constants.forEach { spec.addEnumConstant(it) }
     return spec.build()
 }
+
+// TODO does this need to support a default value?
+internal fun buildListParameter(isNullable: Boolean = false, itemCls: KClass<*>, name: String): ParameterSpec =
+    ParameterSpec.builder(name, List::class.asClassName().parameterizedBy(itemCls.asTypeName()).copy(nullable = isNullable)).build()
 
 internal fun <T: Any> buildParameter(cls: KClass<T>, default: T? = null, isNullable: Boolean = false, name: String): ParameterSpec {
     val spec = ParameterSpec.builder(name, cls.asTypeName().copy(nullable = isNullable))

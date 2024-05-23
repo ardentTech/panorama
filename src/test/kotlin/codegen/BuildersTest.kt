@@ -97,6 +97,24 @@ class BuildersTest {
     }
 
     @Test
+    fun `buildListParameter, nullable false`() {
+        assertEquals("""
+            |foo: kotlin.collections.List<kotlin.String>
+            """.trimMargin(),
+            codegen.kotlinpoet.buildListParameter(isNullable = false, String::class, "foo").toString()
+        )
+    }
+
+    @Test
+    fun `buildListParameter, nullable true`() {
+        assertEquals("""
+            |foo: kotlin.collections.List<kotlin.Int>?
+            """.trimMargin(),
+            codegen.kotlinpoet.buildListParameter(isNullable = true, Int::class, "foo").toString()
+        )
+    }
+
+    @Test
     fun `buildProperty no value`() {
         assertEquals("""
             |val foo: kotlin.String
