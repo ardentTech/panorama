@@ -18,6 +18,8 @@ data class KPropConfig<T: Any>(
         itemCls?.let { require(cls == List::class) }
         if (cls == List::class) require(itemCls != null)
     }
+
+    // TODO companion object or aliases to quickly get string, int, etc. without specifying ::class
 }
 
 object KPropConfigFactory {

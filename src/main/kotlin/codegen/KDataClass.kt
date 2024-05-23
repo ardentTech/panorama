@@ -5,6 +5,8 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KClass
 
+// TODO could have input, output, etc. specific generators that name things in a standard way
+
 // TODO constructorProperties cannot be empty
 internal data class KDataClassConfig(
     val bodyProperties: List<KPropConfig<out Any>> = emptyList(),

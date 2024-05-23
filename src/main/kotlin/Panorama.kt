@@ -1,4 +1,4 @@
-import codegen.codegen
+import codegen.CodeGen
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.serialization.json.ClassDiscriminatorMode
 import kotlinx.serialization.json.Json
@@ -22,12 +22,12 @@ object Panorama {
     }
 
     fun codegen(doc: LexiconDoc): Result<Unit> {
-        doc.codegen().writeTo(System.out)
+        CodeGen.from(doc).writeTo(System.out)
         return Result.success(Unit)
     }
 
     fun codegen(doc: LexiconDoc, destination: Path): Result<Unit> {
-        doc.codegen().writeTo(destination)
+        CodeGen.from(doc).writeTo(destination)
         return Result.success(Unit)
     }
 
