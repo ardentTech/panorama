@@ -1,0 +1,3 @@
+package codegen
+
+interface CodeGen {}
