@@ -1,10 +1,71 @@
 package codegen
 
+import codegen.kotlinpoet.buildDataClass
+import codegen.kotlinpoet.buildParameter
+import codegen.kotlinpoet.buildProperty
 import codegen.kotlinpoet.formatterFor
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class BuildersTest {
+
+    @Test
+    fun `buildDataClass, parameters empty`() {
+        assertFailsWith<IllegalArgumentException> {
+            buildDataClass(description = "testing", name = "FooBar", parameters = emptyList())
+        }
+    }
+
+    @Test
+    fun `buildDataClass, description null`() {
+        assertEquals("""
+            |public data class FooBar(
+            |  public val foo: kotlin.String,
+            |)
+            |
+        """.trimMargin(),
+            buildDataClass(description = null, name = "FooBar", parameters = listOf(
+                buildParameter(String::class, default = null, isNullable = false, name = "foo")
+            )).toString()
+        )
+    }
+
+    @Test
+    fun `buildDataClass, description not null`() {
+        assertEquals("""
+            |/**
+            | * testing
+            | */
+            |public data class FooBar(
+            |  public val foo: kotlin.String,
+            |)
+            |
+        """.trimMargin(),
+            buildDataClass(description = "testing", name = "FooBar", parameters = listOf(
+                buildParameter(String::class, default = null, isNullable = false, name = "foo")
+            )).toString()
+        )
+    }
+
+    @Test
+    fun `buildDataClass, properties not empty`() {
+        assertEquals("""
+            |public data class FooBar(
+            |  public val foo: kotlin.String,
+            |) {
+            |  public val bar: kotlin.String = "baz"
+            |}
+            |
+        """.trimMargin(),
+            buildDataClass(
+                description = null,
+                name = "FooBar",
+                parameters = listOf(buildParameter(String::class, default = null, isNullable = false, name = "foo")),
+                properties = listOf(buildProperty(String::class, "bar", "baz"))
+            ).toString()
+        )
+    }
 
     @Test
     fun `buildDataObject without description`() {
@@ -65,7 +126,7 @@ class BuildersTest {
         assertEquals("""
             |foo: kotlin.String
             """.trimMargin(),
-            codegen.kotlinpoet.buildParameter(String::class, default = null, isNullable = false, name = "foo").toString()
+            buildParameter(String::class, default = null, isNullable = false, name = "foo").toString()
         )
     }
 
@@ -74,7 +135,7 @@ class BuildersTest {
         assertEquals("""
             |foo: kotlin.String = "bar"
             """.trimMargin(),
-            codegen.kotlinpoet.buildParameter(String::class, default = "bar", isNullable = false, name = "foo").toString()
+            buildParameter(String::class, default = "bar", isNullable = false, name = "foo").toString()
         )
     }
 
@@ -83,7 +144,7 @@ class BuildersTest {
         assertEquals("""
             |foo: kotlin.String?
             """.trimMargin(),
-            codegen.kotlinpoet.buildParameter(String::class, default = null, isNullable = true, name = "foo").toString()
+            buildParameter(String::class, default = null, isNullable = true, name = "foo").toString()
         )
     }
 
@@ -92,7 +153,7 @@ class BuildersTest {
         assertEquals("""
             |foo: kotlin.String? = "bar"
             """.trimMargin(),
-            codegen.kotlinpoet.buildParameter(String::class, default = "bar", isNullable = true, name = "foo").toString()
+            buildParameter(String::class, default = "bar", isNullable = true, name = "foo").toString()
         )
     }
 

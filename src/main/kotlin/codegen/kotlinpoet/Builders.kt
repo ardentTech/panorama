@@ -4,7 +4,32 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import kotlin.reflect.KClass
 
-// these functions aim to provide a more friendly API for building KotlinPoet specs
+// these functions aim to provide a more friendly API for building necessary KotlinPoet specs
+
+fun ParameterSpec.toProperty(): PropertySpec = PropertySpec.builder(name, type).initializer(name).build()
+
+internal fun buildDataClass(
+    description: String? = null,
+    name: String,
+    parameters: List<ParameterSpec>,
+    properties: List<PropertySpec> = emptyList()
+): TypeSpec {
+    require(parameters.isNotEmpty())
+    val spec = TypeSpec.classBuilder(name)
+        .addModifiers(KModifier.DATA)
+    description?.let { spec.addKdoc(it) }
+
+    val constructor = FunSpec.constructorBuilder()
+    constructor.addParameters(parameters)
+    spec.addProperties(parameters.map { it.toProperty() })
+    spec.primaryConstructor(constructor.build())
+
+    spec.addProperties(properties)
+
+    // TODO validators
+
+    return spec.build()
+}
 
 internal fun buildDataObject(description: String? = null, name: String): TypeSpec {
     val spec = TypeSpec.objectBuilder(name)
