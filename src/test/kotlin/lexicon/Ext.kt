@@ -17,7 +17,7 @@ fun LexiconDoc.Companion.factory(
 fun LexiconObject.Companion.factory(
     description: String? = null,
     nullable: List<String>? = null,
-    properties: Map<String, LexiconObject.Property> = emptyMap(),
+    properties: Map<String, SchemaDef> = emptyMap(),
     required: List<String>? = null
 ) = LexiconObject(
     description, nullable, properties, required
@@ -25,7 +25,7 @@ fun LexiconObject.Companion.factory(
 
 fun LexiconParams.Companion.factory(
     description: String? = null,
-    properties: Map<String, LexiconParams.Property> = emptyMap(),
+    properties: Map<String, SchemaDef> = emptyMap(),
     required: List<String>? = null
 ) = LexiconParams(
     description, properties, required

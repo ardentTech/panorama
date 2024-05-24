@@ -7,6 +7,6 @@ data class LexiconRecord(
     override val description: String? = null,
     val key: String,
     val record: LexiconObject
-): SchemaDef.PrimaryType {
+): SchemaDef.Primary {
     override val type = LexiconType.RECORD
 }

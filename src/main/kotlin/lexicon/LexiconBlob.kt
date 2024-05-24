@@ -9,6 +9,6 @@ data class LexiconBlob(
     val accept: List<String>? = null,
     override val description: String? = null,
     val maxSize: Int? = null,
-): SchemaDef.FieldType, LexiconArray.Items, LexiconObject.Property {
+): SchemaDef.Concrete {
     override val type = LexiconType.BLOB
 }

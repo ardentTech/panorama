@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LexiconToken(
     override val description: String? = null
-): SchemaDef.FieldType {
+): SchemaDef.Meta {
     override val type = LexiconType.TOKEN
 }

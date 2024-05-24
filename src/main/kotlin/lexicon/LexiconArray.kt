@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 
 // TODO unit test
-private object ArrayItems: JsonTransformingSerializer<LexiconArray.Items>(LexiconArray.Items.serializer()) {
+private object ArrayItems: JsonTransformingSerializer<SchemaDef>(SchemaDef.serializer()) {
     override fun transformDeserialize(element: JsonElement): JsonElement {
         return JsonObject(element.jsonObject.toMutableMap().apply {
             val serializerCls = when (val type = this["type"]!!.jsonPrimitive.content) {
@@ -28,13 +28,9 @@ private object ArrayItems: JsonTransformingSerializer<LexiconArray.Items>(Lexico
 @Serializable
 data class LexiconArray(
     override val description: String? = null,
-    @Serializable(with = ArrayItems::class) val items: Items,
+    @Serializable(with = ArrayItems::class) val items: SchemaDef,
     val maxLength: Int? = null,
     val minLength: Int? = null,
-): SchemaDef.FieldType, LexiconObject.Property, LexiconParams.Property {
-
-    @Serializable
-    sealed interface Items
-
+): SchemaDef.Container {
     override val type = LexiconType.ARRAY
 }

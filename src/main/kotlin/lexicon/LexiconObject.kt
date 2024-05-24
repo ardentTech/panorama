@@ -6,7 +6,7 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.*
 
 // TODO unit test
-private object ObjectProperties: JsonTransformingSerializer<Map<String, LexiconObject.Property>>(MapSerializer(String.serializer(), LexiconObject.Property.serializer())) {
+private object ObjectProperties: JsonTransformingSerializer<Map<String, SchemaDef>>(MapSerializer(String.serializer(), SchemaDef.serializer())) {
     override fun transformDeserialize(element: JsonElement): JsonElement {
         val content = mutableMapOf<String, JsonElement>()
         element.jsonObject.map { (k, v) ->
@@ -36,13 +36,9 @@ private object ObjectProperties: JsonTransformingSerializer<Map<String, LexiconO
 data class LexiconObject(
     override val description: String? = null,
     val nullable: List<String>? = null,
-    @Serializable(with = ObjectProperties::class) val properties: Map<String, Property>,
+    @Serializable(with = ObjectProperties::class) val properties: Map<String, SchemaDef>,
     val required: List<String>? = null,
-): SchemaDef.FieldType, LexiconIO.Schema {
-
-    @Serializable
-    sealed interface Property
-
+): SchemaDef.Container {
     override val type = LexiconType.OBJECT
 
     init {

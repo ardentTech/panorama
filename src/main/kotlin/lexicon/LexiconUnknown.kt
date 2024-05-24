@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LexiconUnknown(
     override val description: String? = null
-): SchemaDef.FieldType, LexiconArray.Items, LexiconObject.Property, LexiconParams.Property {
+): SchemaDef.Meta {
     override val type = LexiconType.UNKNOWN
 }

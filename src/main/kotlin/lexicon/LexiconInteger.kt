@@ -11,6 +11,6 @@ data class LexiconInteger(
     val enum: List<Int>? = null,
     val maximum: Int? = null,
     val minimum: Int? = null,
-): SchemaDef.FieldType, LexiconArray.Items, LexiconObject.Property, LexiconParams.Property {
+): SchemaDef.Concrete {
     override val type = LexiconType.INTEGER
 }

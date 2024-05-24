@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LexiconNull(
     override val description: String? = null
-): SchemaDef.FieldType {
+): SchemaDef.Concrete {
     override val type = LexiconType.NULL
 }

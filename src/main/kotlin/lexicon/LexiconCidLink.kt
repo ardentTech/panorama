@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LexiconCidLink(
     override val description: String? = null
-): SchemaDef.FieldType, LexiconArray.Items, LexiconObject.Property {
+): SchemaDef.Concrete {
     override val type = LexiconType.CID_LINK
 }

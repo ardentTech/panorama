@@ -8,7 +8,7 @@ data class LexiconSubscription(
     val errors: List<LexiconError>? = null,
     val message: Message? = null,
     val parameters: LexiconParams? = null,
-): SchemaDef.PrimaryType {
+): SchemaDef.Primary {
 
     @Serializable
     data class Message(
