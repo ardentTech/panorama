@@ -25,7 +25,7 @@ class LexiconProcedureTest: LexiconTest() {
         """.trimIndent()
         val parsed = LexiconProcedure(
             description = "Creates a mute relationship for the specified account. Mutes are private in Bluesky. Requires auth.",
-            input = LexiconIO(
+            input = LexiconProcedure.IO(
                 encoding = "application/json",
                 schema = LexiconObject(
                     required = listOf("actor"),

@@ -38,7 +38,7 @@ data class LexiconObject(
     val nullable: List<String>? = null,
     @Serializable(with = ObjectProperties::class) val properties: Map<String, Property>,
     val required: List<String>? = null,
-): SchemaDef.Container, LexiconIO.Schema {
+): SchemaDef.Container, LexiconProcedure.IO.Schema, LexiconQuery.IO.Schema {
 
     @Serializable
     sealed interface Property

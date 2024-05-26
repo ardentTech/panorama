@@ -8,6 +8,12 @@ data class LexiconUnion(
     val closed: Boolean? = null,
     override val description: String? = null,
     val refs: List<String>
-): SchemaDef.Meta, LexiconArray.Items, LexiconObject.Property, LexiconIO.Schema {
+):
+    SchemaDef.Meta,
+    LexiconArray.Items,
+    LexiconObject.Property,
+    LexiconProcedure.IO.Schema,
+    LexiconQuery.IO.Schema
+{
     override val type = LexiconType.UNION
 }

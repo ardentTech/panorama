@@ -84,7 +84,7 @@ class LexiconDocTest: LexiconTest() {
             defs = mapOf(
                 "main" to LexiconProcedure(
                     description = "Delete a user account as an administrator.",
-                    input = LexiconIO(
+                    input = LexiconProcedure.IO(
                         encoding = "application/json",
                         schema = LexiconObject(
                             required = listOf("did"),

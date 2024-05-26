@@ -30,7 +30,7 @@ class LexiconQueryTest: LexiconTest() {
         """.trimIndent()
         val parsed = LexiconQuery(
             description = "Get information about the current auth session. Requires auth.",
-            output = LexiconIO(
+            output = LexiconQuery.IO(
                 encoding = "application/json",
                 schema = LexiconObject(
                     required = listOf("handle", "did"),
