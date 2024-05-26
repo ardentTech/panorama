@@ -34,7 +34,7 @@ data class LexiconString(
     val maxGraphemes: Int? = null,
     val minGraphemes: Int? = null,
     val knownValues: List<String>? = null,
-): SchemaDef.FieldType, LexiconArray.Items, LexiconObject.Property, LexiconParams.Property {
+): SchemaDef.Concrete, LexiconArray.Items, LexiconObject.Property, LexiconParams.Property {
 
     @Serializable
     enum class Format(val code: String) {

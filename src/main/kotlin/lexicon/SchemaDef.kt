@@ -8,6 +8,8 @@ sealed interface SchemaDef {
     val description: String?
     val type: String
 
-    sealed interface PrimaryType: SchemaDef
-    sealed interface FieldType: SchemaDef
+    sealed interface Concrete: SchemaDef
+    sealed interface Container: SchemaDef
+    sealed interface Meta: SchemaDef
+    sealed interface Primary: SchemaDef
 }

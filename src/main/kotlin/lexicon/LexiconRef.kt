@@ -7,6 +7,6 @@ import kotlinx.serialization.Serializable
 data class LexiconRef(
     override val description: String? = null,
     val ref: String
-): SchemaDef.FieldType, LexiconArray.Items, LexiconObject.Property, LexiconIO.Schema {
+): SchemaDef.Meta, LexiconArray.Items, LexiconObject.Property, LexiconIO.Schema {
     override val type = LexiconType.REF
 }

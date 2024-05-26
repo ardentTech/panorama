@@ -8,6 +8,6 @@ data class LexiconBoolean(
     val const: Boolean? = null,
     val default: Boolean? = null,
     override val description: String? = null
-): SchemaDef.FieldType, LexiconArray.Items, LexiconObject.Property, LexiconParams.Property {
+): SchemaDef.Concrete, LexiconArray.Items, LexiconObject.Property, LexiconParams.Property {
     override val type = LexiconType.BOOLEAN
 }

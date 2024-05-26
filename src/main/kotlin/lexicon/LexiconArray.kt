@@ -31,7 +31,7 @@ data class LexiconArray(
     @Serializable(with = ArrayItems::class) val items: Items,
     val maxLength: Int? = null,
     val minLength: Int? = null,
-): SchemaDef.FieldType, LexiconObject.Property, LexiconParams.Property {
+): SchemaDef.Container, LexiconObject.Property, LexiconParams.Property {
 
     @Serializable
     sealed interface Items

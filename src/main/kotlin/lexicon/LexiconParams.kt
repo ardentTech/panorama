@@ -32,7 +32,7 @@ data class LexiconParams(
     override val description: String? = null,
     @Serializable(with = ParamsProperties::class) val properties: Map<String, Property>,
     val required: List<String>? = null,
-): SchemaDef.FieldType {
+): SchemaDef.Container {
     @Serializable
     sealed interface Property
 

@@ -49,7 +49,7 @@ data class LexiconDoc(
 
         var primaryDefs = 0
         defs.forEach {
-            if (it.value is SchemaDef.PrimaryType) {
+            if (it.value is SchemaDef.Primary) {
                 primaryDefs++
                 if (primaryDefs > 1) { throw IllegalArgumentException(TOO_MANY_PRIMARY_DEFS) }
             }

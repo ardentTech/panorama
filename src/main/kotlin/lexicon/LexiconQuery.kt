@@ -8,6 +8,6 @@ data class LexiconQuery(
     val errors: List<LexiconError>? = null,
     val output: LexiconIO? = null,
     val parameters: LexiconParams? = null,
-): SchemaDef.PrimaryType {
+): SchemaDef.Primary {
     override val type = LexiconType.QUERY
 }
