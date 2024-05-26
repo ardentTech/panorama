@@ -1,7 +1,8 @@
-package codegen.kotlinpoet
+package codegen
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import kotlinx.serialization.Serializable
 import kotlin.reflect.KClass
 
 // these functions aim to provide a more friendly API for building necessary KotlinPoet specs
@@ -16,6 +17,7 @@ internal fun buildDataClass(
 ): TypeSpec {
     require(parameters.isNotEmpty())
     val spec = TypeSpec.classBuilder(name)
+        .addAnnotation(Serializable::class)
         .addModifiers(KModifier.DATA)
     description?.let { spec.addKdoc(it) }
 
@@ -31,10 +33,12 @@ internal fun buildDataClass(
     return spec.build()
 }
 
-internal fun buildDataObject(description: String? = null, name: String): TypeSpec {
+internal fun buildDataObject(description: String? = null, name: String, properties: List<PropertySpec> = emptyList()): TypeSpec {
     val spec = TypeSpec.objectBuilder(name)
+        .addAnnotation(Serializable::class)
         .addModifiers(KModifier.DATA)
     description?.let { spec.addKdoc(it) }
+    spec.addProperties(properties) // TODO unit test
     return spec.build()
 }
 
@@ -43,6 +47,14 @@ internal fun buildEnum(constants: List<String>, description: String? = null, nam
     description?.let { spec.addKdoc(it) }
     constants.forEach { spec.addEnumConstant(it) }
     return spec.build()
+}
+
+// TODO unit test
+internal fun buildFile(comment: String, contents: List<TypeSpec>, packageName: String, fileName: String): FileSpec {
+    return FileSpec.builder(packageName, fileName)
+        .addFileComment(comment)
+        .addTypes(contents)
+        .build()
 }
 
 // TODO does this need to support a default value?
@@ -62,3 +74,16 @@ internal fun <T: Any> buildProperty(cls: KClass<T>, name: String, value: T? = nu
 }
 
 internal fun <T: Any> formatterFor(cls: KClass<T>): String = if (cls == String::class) "%S" else "%L"
+
+internal fun <T: Any> buildValueClass(cls: KClass<T>, name: String): TypeSpec {
+    return TypeSpec.classBuilder(name)
+        .addAnnotation(Serializable::class)
+        .addModifiers(KModifier.VALUE)
+        .primaryConstructor(
+            FunSpec.constructorBuilder().addParameter("value", cls).build()
+        )
+        .addProperty(
+            PropertySpec.builder("value", cls).initializer("value").build()
+        )
+        .build()
+}

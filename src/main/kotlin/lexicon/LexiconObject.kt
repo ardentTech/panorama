@@ -45,4 +45,7 @@ data class LexiconObject(
         nullable?.forEach { require(it in properties.keys) }
         required?.forEach { require(it in properties.keys) }
     }
+
+    // TODO unit test
+    fun isNullable(name: String) = nullable?.contains(name) == true
 }

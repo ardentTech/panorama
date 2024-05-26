@@ -1,9 +1,5 @@
 package codegen
 
-import codegen.kotlinpoet.buildDataClass
-import codegen.kotlinpoet.buildParameter
-import codegen.kotlinpoet.buildProperty
-import codegen.kotlinpoet.formatterFor
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -73,7 +69,7 @@ class BuildersTest {
             |public data object FooBar
             |
             """.trimMargin(),
-            codegen.kotlinpoet.buildDataObject(name = "FooBar").toString()
+            buildDataObject(name = "FooBar").toString()
         )
     }
 
@@ -86,7 +82,7 @@ class BuildersTest {
             |public data object FooBar
             |
             """.trimMargin(),
-            codegen.kotlinpoet.buildDataObject(description = "foobar", name = "FooBar").toString()
+            buildDataObject(description = "foobar", name = "FooBar").toString()
         )
     }
 
@@ -100,7 +96,7 @@ class BuildersTest {
             |}
             |
             """.trimMargin(),
-            codegen.kotlinpoet.buildEnum(listOf("ONE", "TWO", "THREE"), name = "TestEnum").toString()
+            buildEnum(listOf("ONE", "TWO", "THREE"), name = "TestEnum").toString()
         )
     }
 
@@ -117,7 +113,7 @@ class BuildersTest {
             |}
             |
             """.trimMargin(),
-            codegen.kotlinpoet.buildEnum(listOf("ONE", "TWO", "THREE"), description = "foobar", name = "TestEnum").toString()
+            buildEnum(listOf("ONE", "TWO", "THREE"), description = "foobar", name = "TestEnum").toString()
         )
     }
 
@@ -162,7 +158,7 @@ class BuildersTest {
         assertEquals("""
             |foo: kotlin.collections.List<kotlin.String>
             """.trimMargin(),
-            codegen.kotlinpoet.buildListParameter(isNullable = false, String::class, "foo").toString()
+            buildListParameter(isNullable = false, String::class, "foo").toString()
         )
     }
 
@@ -171,7 +167,7 @@ class BuildersTest {
         assertEquals("""
             |foo: kotlin.collections.List<kotlin.Int>?
             """.trimMargin(),
-            codegen.kotlinpoet.buildListParameter(isNullable = true, Int::class, "foo").toString()
+            buildListParameter(isNullable = true, Int::class, "foo").toString()
         )
     }
 
@@ -181,7 +177,7 @@ class BuildersTest {
             |val foo: kotlin.String
             |
             """.trimMargin(),
-            codegen.kotlinpoet.buildProperty(String::class, "foo").toString()
+            buildProperty(String::class, "foo").toString()
         )
     }
 
@@ -191,7 +187,7 @@ class BuildersTest {
             |val foo: kotlin.String = "bar"
             |
             """.trimMargin(),
-            codegen.kotlinpoet.buildProperty(String::class, "foo", "bar").toString()
+            buildProperty(String::class, "foo", "bar").toString()
         )
     }
 
@@ -201,7 +197,7 @@ class BuildersTest {
             |val foo: kotlin.Int = 8
             |
             """.trimMargin(),
-            codegen.kotlinpoet.buildProperty(Int::class, "foo", 8).toString()
+            buildProperty(Int::class, "foo", 8).toString()
         )
     }
 
