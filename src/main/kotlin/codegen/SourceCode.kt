@@ -74,4 +74,17 @@ internal object SourceCode {
         value?.let { spec.initializer(formatterFor(cls), it) }
         return spec.build()
     }
+
+    fun <T: Any> generateValueClass(cls: KClass<T>, name: String): TypeSpec {
+        return TypeSpec.classBuilder(name)
+            .addAnnotation(Serializable::class)
+            .addModifiers(KModifier.VALUE)
+            .primaryConstructor(
+                FunSpec.constructorBuilder().addParameter("v", cls).build()
+            )
+            .addProperty(
+                PropertySpec.builder("v", cls).initializer("v").build()
+            )
+            .build()
+    }
 }

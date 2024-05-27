@@ -18,14 +18,14 @@ class SourceCodeTest {
     }
 
     @Test
-    fun `buildDataClass, parameters empty`() {
+    fun `generateDataClass, parameters empty`() {
         assertFailsWith<IllegalArgumentException> {
             SourceCode.generateDataClass(description = "testing", name = "FooBar", parameters = emptyList())
         }
     }
 
     @Test
-    fun `buildDataClass, description null`() {
+    fun `generateDataClass, description null`() {
         assertEquals("""
             |@kotlinx.serialization.Serializable
             |public data class FooBar(
@@ -40,7 +40,7 @@ class SourceCodeTest {
     }
 
     @Test
-    fun `buildDataClass, description not null`() {
+    fun `generateDataClass, description not null`() {
         assertEquals("""
             |/**
             | * testing
@@ -58,7 +58,7 @@ class SourceCodeTest {
     }
 
     @Test
-    fun `buildDataClass, properties not empty`() {
+    fun `generateDataClass, properties not empty`() {
         assertEquals("""
             |@kotlinx.serialization.Serializable
             |public data class FooBar(
@@ -218,7 +218,7 @@ class SourceCodeTest {
     }
 
     @Test
-    fun `buildProperty no value`() {
+    fun `generateProperty no value`() {
         assertEquals("""
             |val foo: kotlin.String
             |
@@ -228,7 +228,7 @@ class SourceCodeTest {
     }
 
     @Test
-    fun `buildProperty string value`() {
+    fun `generateProperty string value`() {
         assertEquals("""
             |val foo: kotlin.String = "bar"
             |
@@ -238,12 +238,25 @@ class SourceCodeTest {
     }
 
     @Test
-    fun `buildProperty not string value`() {
+    fun `generateProperty not string value`() {
         assertEquals("""
             |val foo: kotlin.Int = 8
             |
             """.trimMargin(),
             SourceCode.generateProperty(Int::class, "foo", 8).toString()
+        )
+    }
+
+    @Test
+    fun `generateValueClass format ok`() {
+        assertEquals("""
+            |@kotlinx.serialization.Serializable
+            |public value class FooBar(
+            |  public val v: kotlin.String,
+            |)
+            |
+        """.trimMargin(),
+            SourceCode.generateValueClass(String::class, "FooBar").toString()
         )
     }
 }
