@@ -12,8 +12,7 @@ data class LexiconUnion(
     SchemaDef.Meta,
     LexiconArray.Items,
     LexiconObject.Property,
-    LexiconProcedure.IO.Schema,
-    LexiconQuery.IO.Schema
+    PrimaryIOSchema
 {
     override val type = LexiconType.UNION
 }

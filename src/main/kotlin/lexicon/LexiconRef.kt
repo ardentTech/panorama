@@ -11,8 +11,7 @@ data class LexiconRef(
     SchemaDef.Meta,
     LexiconArray.Items,
     LexiconObject.Property,
-    LexiconProcedure.IO.Schema,
-    LexiconQuery.IO.Schema
+    PrimaryIOSchema
 {
     override val type = LexiconType.REF
 }

@@ -1,21 +1,6 @@
 package lexicon
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.*
-
-private object LexiconProcedureIOSchema: JsonTransformingSerializer<LexiconProcedure.IO.Schema>(LexiconProcedure.IO.Schema.serializer()) {
-    override fun transformDeserialize(element: JsonElement): JsonElement {
-        return JsonObject(element.jsonObject.toMutableMap().apply {
-            val serializerCls = when (val type = this["type"]!!.jsonPrimitive.content) {
-                LexiconType.REF -> LexiconRef::class
-                LexiconType.OBJECT -> LexiconObject::class
-                LexiconType.UNION -> LexiconUnion::class
-                else -> throw IllegalArgumentException("Unexpected type: $type")
-            }
-            this["discriminator"] = JsonPrimitive("lexicon.${serializerCls.simpleName}")
-        })
-    }
-}
 
 @Serializable
 data class LexiconProcedure(
@@ -29,17 +14,14 @@ data class LexiconProcedure(
 
     @Serializable
     data class Error(
-        val description: String? = null,
-        val name: String
-    )
+        override val description: String? = null,
+        override val name: String
+    ): PrimaryError
 
     @Serializable
     data class IO(
-        val description: String? = null,
-        val encoding: String,
-        @Serializable(with = LexiconProcedureIOSchema::class) val schema: Schema? = null
-    ) {
-        @Serializable
-        sealed interface Schema
-    }
+        override val description: String? = null,
+        override val encoding: String,
+        @Serializable(with = PrimaryIOSchemaSerializer::class) override val schema: PrimaryIOSchema? = null
+    ): PrimaryIO
 }

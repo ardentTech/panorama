@@ -12,9 +12,9 @@ data class LexiconSubscription(
 
     @Serializable
     data class Error(
-        val description: String? = null,
-        val name: String
-    )
+        override val description: String? = null,
+        override val name: String
+    ): PrimaryError
 
     @Serializable
     data class Message(
