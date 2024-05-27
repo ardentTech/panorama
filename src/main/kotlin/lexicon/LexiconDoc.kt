@@ -56,6 +56,9 @@ data class LexiconDoc(
         }
     }
 
+    val name: String
+        get() = this.id.substringAfterLast(".")
+
     val namespace: String?
         get() = ".*(?=\\.)".toRegex().find(this.id)?.value
 }

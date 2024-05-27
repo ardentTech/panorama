@@ -149,6 +149,16 @@ class LexiconDocTest: LexiconTest() {
     }
 
     @Test
+    fun `name ok`() {
+        val id = "foo.bar.testing.lexiconName"
+        val lex = LexiconDoc.factory(
+            defs = mapOf("one" to LexiconQuery()),
+            id = id
+        )
+        assertEquals(id.split(".").last(), lex.name)
+    }
+
+    @Test
     fun `namespace ok`() {
         val id = "foo.bar.testing.lexiconName"
         val lex = LexiconDoc.factory(
