@@ -1,4 +1,3 @@
-import codegen.converters.convertToFile
 import kotlin.io.path.*
 
 fun main() {
@@ -6,7 +5,7 @@ fun main() {
         namespaces = listOf("com.atproto.admin"),
         source = Path("./data/com")
     ).fold(
-        onSuccess = { docs -> docs.forEach { println(it.convertToFile()) } },
+        onSuccess = { docs -> docs.forEach { Panorama.codegen(it, Path("./src/main/kotlin"))} },
         onFailure = { it.printStackTrace() }
     )
 }

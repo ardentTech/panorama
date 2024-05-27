@@ -1,3 +1,4 @@
+import codegen.converters.convertToFile
 import kotlinx.serialization.json.ClassDiscriminatorMode
 import kotlinx.serialization.json.Json
 import lexicon.LexiconDoc
@@ -18,20 +19,21 @@ object Panorama {
         }
     }
 
-    // TODO codegen to stdout
     fun codegen(doc: LexiconDoc): Result<Unit> {
+        doc.convertToFile().writeTo(System.out)
         return Result.success(Unit)
     }
 
     // TODO doc codegen to filesystem
     fun codegen(doc: LexiconDoc, destination: Path): Result<Unit> {
+        doc.convertToFile().writeTo(destination)
         return Result.success(Unit)
     }
 
     // TODO namespace codegen to filesystem
 //    fun codegen(source: Path, destination: Path): Result<Unit> {
 //        // require that source is a directory
-//        // handle `defs.json` first
+//        // handle `defs.json` first, then records
 //        return Result.success(Unit)
 //    }
 
