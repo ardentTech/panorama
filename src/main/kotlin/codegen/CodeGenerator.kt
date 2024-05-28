@@ -1,6 +1,7 @@
 package codegen
 
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import kotlinx.serialization.Serializable
 import java.nio.file.Path
 import kotlin.reflect.KClass
@@ -37,31 +38,43 @@ object KpCodeGenerator: CodeGenerator {
         })
         .build()
 
-    private fun KtParameter<*>.toParameterSpec(): ParameterSpec {
-        val spec = ParameterSpec.builder(name, cls.asTypeName().copy(nullable = isNullable))
-        default?.let { spec.defaultValue(formatterFor(cls), it) }
-        return spec.build()
+    private fun KtMember.KtParameter<*>.toParameterSpec(): ParameterSpec {
+        return if (this is KtMember.KtParameter.KtCollection<*, *>) {
+            val spec = ParameterSpec.builder(name, List::class.asClassName().parameterizedBy(itemCls.asTypeName()).copy(nullable = isNullable))
+            default?.let { spec.defaultValue(formatterFor(cls), it) }
+            spec.build()
+        } else {
+            val spec = ParameterSpec.builder(name, cls.asTypeName().copy(nullable = isNullable))
+            default?.let { spec.defaultValue(formatterFor(cls), it) }
+            spec.build()
+        }
     }
 
-    private fun KtProperty<*>.toPropertySpec(): PropertySpec {
-        val spec = PropertySpec.builder(name, cls)
-        value?.let { spec.initializer(formatterFor(cls), it) }
-        return spec.build()
+    private fun KtMember.KtProperty<*>.toPropertySpec(): PropertySpec {
+        return if (this is KtMember.KtProperty.KtCollection<*, *>) {
+            val spec = PropertySpec.builder(name, cls)
+            constant?.let { spec.initializer(formatterFor(cls), it) }
+            spec.build()
+        } else {
+            val spec = PropertySpec.builder(name, cls)
+            constant?.let { spec.initializer(formatterFor(cls), it) }
+            spec.build()
+        }
     }
 
     private fun KtType.KtDataClass.toTypeSpec(): TypeSpec {
-        require(parameters.isNotEmpty())
+        require(members.isNotEmpty())
         val spec = TypeSpec.classBuilder(name)
             .addAnnotation(Serializable::class)
             .addModifiers(KModifier.DATA)
         description?.let { spec.addKdoc(it) }
         val constructor = FunSpec.constructorBuilder()
-        val parameterSpecs = parameters.map { it.toParameterSpec() }
+        val parameterSpecs = members.parameters().map { it.toParameterSpec() }
 
         constructor.addParameters(parameterSpecs)
         spec.addProperties(parameterSpecs.map { it.toProperty() })
         spec.primaryConstructor(constructor.build())
-        spec.addProperties(properties.map { it.toPropertySpec() })
+        spec.addProperties(members.properties().map { it.toPropertySpec() })
 
         // TODO validators
 

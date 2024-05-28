@@ -42,10 +42,31 @@ internal fun LexiconDoc.toFile(): KtFile {
     )
 }
 
-internal fun LexiconObject.Property.toProperty(isNullable: Boolean, name: String): KtProperty<*> {
+internal fun LexiconArray.toMember(isNullable: Boolean, name: String): KtMember<*> {
+    val itemCls = when(items) {
+        // TODO these aren't all valid
+        is LexiconBlob -> String::class
+        is LexiconBoolean -> Boolean::class
+        is LexiconBytes -> String::class
+        is LexiconCidLink -> String::class
+        is LexiconInteger -> Int::class
+        is LexiconRef -> String::class
+        is LexiconString -> String::class
+        is LexiconUnion -> String::class
+        is LexiconUnknown -> String::class
+    }
+    return KtMember.KtParameter.KtCollection(List::class, null, isNullable, itemCls, name)
+}
+
+internal fun LexiconObject.Property.toMember(isNullable: Boolean, name: String): KtMember<*> {
     return when (this) {
-        //is LexiconArray -> TODO()
-        is LexiconString -> KtProperty(String::class, this.default, isNullable, name, this.const)
+        is LexiconArray -> this.toMember(isNullable, name)
+        is LexiconString -> {
+            this.const?.let { constant ->
+                KtMember.KtProperty.KtItem(String::class, constant, isNullable, name)
+            } ?: KtMember.KtParameter.KtItem(String::class, default, isNullable, name)
+        }
+        // TODO others
         else -> throw IllegalArgumentException("TODO")
     }
 }
@@ -53,13 +74,10 @@ internal fun LexiconObject.Property.toProperty(isNullable: Boolean, name: String
 internal fun PrimaryIOSchema.toType(name: String): KtType {
     return when (this) {
         is LexiconObject -> {
-            val rawProperties = this.properties.map { (key, value) -> value.toProperty(nullable?.contains(key) == true, key) }.toTypedArray()
-            val (properties, parameters) = rawProperties.partition { it.value != null }
             KtType.KtDataClass(
                 this.description,
+                this.properties.map { (key, value) -> value.toMember(nullable?.contains(key) == true, key) },
                 name,
-                parameters.map { KtParameter.from(it) },
-                properties
             )
         }
         is LexiconRef -> KtType.KtTypeAlias(name, String::class) // TODO `this.ref` to type reference
