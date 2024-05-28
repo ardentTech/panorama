@@ -22,6 +22,7 @@ internal fun LexiconDoc.toFile(): KtFile {
 
         when (def) {
             is LexiconProcedure -> types += def.toTypes(name)
+            is LexiconQuery -> types += def.toTypes(name)
             else -> throw IllegalArgumentException("Unsupported type: ${def::class.simpleName}")
         }
     }
@@ -61,19 +62,63 @@ internal fun LexiconArray.toMember(isNullable: Boolean, name: String): KtMember<
 internal fun LexiconObject.Property.toMember(isNullable: Boolean, name: String): KtMember<*> {
     return when (this) {
         is LexiconArray -> this.toMember(isNullable, name)
-        is LexiconString -> {
-            this.const?.let { constant ->
-                KtMember.KtProperty.KtItem(String::class, constant, isNullable, name)
-            } ?: KtMember.KtParameter.KtItem(String::class, default, isNullable, name)
-        }
+        is LexiconString -> this.toMember(isNullable, name)
         // TODO others
         else -> throw IllegalArgumentException("TODO")
     }
 }
 
+internal fun LexiconString.toMember(isNullable: Boolean, name: String): KtMember<*> {
+    return this.const?.let { constant ->
+        KtMember.KtProperty.KtItem(String::class, constant, isNullable, name)
+    } ?: KtMember.KtParameter.KtItem(String::class, default, isNullable, name)
+}
+
+internal fun LexiconParams.Property.toMember(name: String): KtMember<*> {
+    return when (this) {
+        is LexiconArray -> this.toMember(false, name)
+        // boolean
+        // integer
+        is LexiconString -> this.toMember(false, name)
+        // unknown
+        else -> throw IllegalArgumentException("TODO")
+    }
+}
+
+internal fun LexiconParams.toType(name: String): KtType {
+    return KtType.KtDataClass(
+        this.description,
+        this.properties.map { (key, value) -> value.toMember(key) },
+        name,
+    )
+}
+
+internal fun LexiconProcedure.toTypes(name: String): List<KtType> {
+    val types = mutableListOf<KtType>()
+
+    input?.let { io ->
+        io.toType("${name}Input")?.let { schema -> types.add(schema) }
+    }
+//    output?.let {  }
+//    errors?.let {  }
+    return types
+}
+
+internal fun LexiconQuery.toTypes(name: String): List<KtType> {
+    val types = mutableListOf<KtType>()
+
+    parameters?.let { types.add(it.toType("${name}Parameters")) }
+    output?.let { io ->
+        io.toType("${name}Output")?.let { schema -> types.add(schema) }
+    }
+//    errors?.let {  }
+    return types
+}
+
 internal fun PrimaryIOSchema.toType(name: String): KtType {
     return when (this) {
         is LexiconObject -> {
+            // TODO might need to move this to its own function
             KtType.KtDataClass(
                 this.description,
                 this.properties.map { (key, value) -> value.toMember(nullable?.contains(key) == true, key) },
@@ -87,15 +132,4 @@ internal fun PrimaryIOSchema.toType(name: String): KtType {
 
 internal fun PrimaryIO.toType(name: String): KtType? {
     return this.schema?.toType(name)
-}
-
-internal fun LexiconProcedure.toTypes(name: String): List<KtType> {
-    val types = mutableListOf<KtType>()
-
-    input?.let { io ->
-        io.toType("${name}Input")?.let { schema -> types.add(schema) }
-    }
-//    output?.let {  }
-//    errors?.let {  }
-    return types
 }

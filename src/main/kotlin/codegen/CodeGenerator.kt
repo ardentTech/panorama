@@ -27,16 +27,24 @@ object KpCodeGenerator: CodeGenerator {
 
     private fun ParameterSpec.toProperty(): PropertySpec = PropertySpec.builder(name, type).initializer(name).build()
 
-    private fun KtFile.toFileSpec() = FileSpec.builder(packageName, name)
-        .addFileComment(description)
-        .addTypes(contents.map {
-            when (it) {
-                is KtType.KtDataClass -> it.toTypeSpec()
-                // TODO other types
-                else -> throw IllegalArgumentException("TODO")
-            }
-        })
-        .build()
+    private fun KtFile.toFileSpec(): FileSpec {
+        // differentiate bc the api to add aliases is different than other types
+        val aliases = contents.filterIsInstance<KtType.KtTypeAlias<*>>()
+        val nonAliases = contents.filter { it !is KtType.KtTypeAlias<*> }
+
+        val spec = FileSpec.builder(packageName, name)
+            .addFileComment(description)
+            .addTypes(nonAliases.map {
+                when (it) {
+                    is KtType.KtDataClass -> it.toTypeSpec()
+                    // TODO other types
+                    else -> throw IllegalArgumentException("Unsupported type: ${it::class.simpleName}")
+                }
+            })
+        aliases.forEach { spec.addTypeAlias(it.toTypeAliasSpec()) }
+
+        return spec.build()
+    }
 
     private fun KtMember.KtParameter<*>.toParameterSpec(): ParameterSpec {
         return if (this is KtMember.KtParameter.KtCollection<*, *>) {
@@ -80,4 +88,6 @@ object KpCodeGenerator: CodeGenerator {
 
         return spec.build()
     }
+
+    private fun KtType.KtTypeAlias<*>.toTypeAliasSpec() = TypeAliasSpec.builder(name, type).build()
 }
