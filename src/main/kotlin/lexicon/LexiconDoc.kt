@@ -19,12 +19,14 @@ private object LexiconDocDefs: JsonTransformingSerializer<Map<String, SchemaDef>
                     LexiconType.BYTES -> LexiconBytes::class
                     LexiconType.CID_LINK -> LexiconCidLink::class
                     LexiconType.INTEGER -> LexiconInteger::class
+                    LexiconType.OBJECT -> LexiconObject::class
                     LexiconType.PROCEDURE -> LexiconProcedure::class
                     LexiconType.QUERY -> LexiconQuery::class
                     LexiconType.RECORD -> LexiconRecord::class
                     LexiconType.REF -> LexiconRef::class
                     LexiconType.STRING -> LexiconString::class
                     LexiconType.SUBSCRIPTION -> LexiconSubscription::class
+                    LexiconType.TOKEN -> LexiconToken::class
                     LexiconType.UNION -> LexiconUnion::class
                     LexiconType.UNKNOWN -> LexiconUnknown::class
                     else -> throw IllegalArgumentException("Unexpected type: $type")
@@ -55,6 +57,9 @@ data class LexiconDoc(
             }
         }
     }
+
+    val name: String
+        get() = this.id.substringAfterLast(".")
 
     val namespace: String?
         get() = ".*(?=\\.)".toRegex().find(this.id)?.value
