@@ -1,4 +1,5 @@
-import codegen.converters.convertToFile
+import codegen.codegen
+import codegen.toKtFile
 import kotlinx.serialization.json.ClassDiscriminatorMode
 import kotlinx.serialization.json.Json
 import lexicon.LexiconDoc
@@ -20,13 +21,13 @@ object Panorama {
     }
 
     fun codegen(doc: LexiconDoc): Result<Unit> {
-        doc.convertToFile().writeTo(System.out)
+        doc.toKtFile().codegen().writeTo(System.out)
         return Result.success(Unit)
     }
 
     // TODO doc codegen to filesystem
     fun codegen(doc: LexiconDoc, destination: Path): Result<Unit> {
-        doc.convertToFile().writeTo(destination)
+        doc.toKtFile().codegen().writeTo(destination)
         return Result.success(Unit)
     }
 
