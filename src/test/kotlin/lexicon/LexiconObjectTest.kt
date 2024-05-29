@@ -212,14 +212,14 @@ class LexiconObjectTest: LexiconTest() {
     @Test
     fun `nullable items must be property keys`() {
         assertFailsWith<IllegalArgumentException> {
-            LexiconObject.factory(nullable = listOf("invalid"))
+            LexiconObject.fake(nullable = listOf("invalid"))
         }
     }
 
     @Test
     fun `nullable items ok`() {
         val key = "foo"
-        LexiconObject.factory(
+        LexiconObject.fake(
             nullable = listOf(key),
             properties = mapOf(key to LexiconString())
         )
@@ -228,14 +228,14 @@ class LexiconObjectTest: LexiconTest() {
     @Test
     fun `required items must be property keys`() {
         assertFailsWith<IllegalArgumentException> {
-            LexiconObject.factory(required = listOf("invalid"))
+            LexiconObject.fake(required = listOf("invalid"))
         }
     }
 
     @Test
     fun `required items ok`() {
         val key = "bar"
-        LexiconObject.factory(
+        LexiconObject.fake(
             properties = mapOf(key to LexiconString()),
             required = listOf(key),
         )

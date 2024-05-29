@@ -1,6 +1,6 @@
 package lexicon
 
-fun LexiconDoc.Companion.factory(
+fun LexiconDoc.Companion.fake(
     defs: Map<String, SchemaDef>,
     description: String? = null,
     id: String = "com.atproto.foo.bar",
@@ -14,7 +14,7 @@ fun LexiconDoc.Companion.factory(
     revision = revision
 )
 
-fun LexiconObject.Companion.factory(
+fun LexiconObject.Companion.fake(
     description: String? = null,
     nullable: List<String>? = null,
     properties: Map<String, LexiconObject.Property> = emptyMap(),
@@ -23,7 +23,7 @@ fun LexiconObject.Companion.factory(
     description, nullable, properties, required
 )
 
-fun LexiconParams.Companion.factory(
+fun LexiconParams.Companion.fake(
     description: String? = null,
     properties: Map<String, LexiconParams.Property> = emptyMap(),
     required: List<String>? = null

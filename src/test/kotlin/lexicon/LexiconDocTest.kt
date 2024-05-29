@@ -9,7 +9,7 @@ class LexiconDocTest: LexiconTest() {
     @Test
     fun `can have at most one primary definition`() {
         assertFailsWith<IllegalArgumentException> {
-            LexiconDoc.factory(
+            LexiconDoc.fake(
                 defs = mapOf(
                     "one" to LexiconQuery(),
                     "two" to LexiconQuery()
@@ -78,7 +78,7 @@ class LexiconDocTest: LexiconTest() {
 }
             
         """.trimIndent()
-        val parsed = LexiconDoc.factory(
+        val parsed = LexiconDoc.fake(
             id = "com.atproto.admin.deleteAccount",
             lexicon = 1,
             defs = mapOf(
@@ -142,19 +142,31 @@ class LexiconDocTest: LexiconTest() {
     @Test
     fun `must have at least one definition`() {
         assertFailsWith<IllegalArgumentException> {
-            LexiconDoc.factory(
+            LexiconDoc.fake(
                 defs = mapOf()
             )
         }
     }
 
     @Test
-    fun `namespace ok`() {
-        val id = "foo.bar.testing.lexiconName"
-        val lex = LexiconDoc.factory(
+    fun `name ok`() {
+        val name = "lexiconName"
+        val id = "foo.bar.testing.$name"
+        val lex = LexiconDoc.fake(
             defs = mapOf("one" to LexiconQuery()),
             id = id
         )
-        assertEquals(id.split(".").dropLast(1).joinToString("."), lex.namespace)
+        assertEquals(name, lex.name)
+    }
+
+    @Test
+    fun `namespace ok`() {
+        val namespace = "foo.bar.testing"
+        val id = "$namespace.lexiconName"
+        val lex = LexiconDoc.fake(
+            defs = mapOf("one" to LexiconQuery()),
+            id = id
+        )
+        assertEquals(namespace, lex.namespace)
     }
 }

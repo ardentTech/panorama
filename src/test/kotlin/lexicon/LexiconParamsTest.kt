@@ -136,7 +136,7 @@ class LexiconParamsTest: LexiconTest() {
     @Test
     fun `required items must be property keys`() {
         assertFailsWith<IllegalArgumentException> {
-            LexiconParams.factory(
+            LexiconParams.fake(
                 required = listOf("invalid")
             )
         }
@@ -145,7 +145,7 @@ class LexiconParamsTest: LexiconTest() {
     @Test
     fun `required items ok`() {
         val key = "foo"
-        LexiconParams.factory(
+        LexiconParams.fake(
             properties = mapOf(key to LexiconString()),
             required = listOf(key)
         )

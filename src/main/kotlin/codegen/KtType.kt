@@ -4,8 +4,8 @@ import kotlin.reflect.KClass
 
 sealed interface KtType {
     data class KtDataClass(
+        val attributes: List<KtAttribute<*>>,
         val description: String? = null,
-        val members: List<KtMember<*>>,
         val name: String,
     ): KtType
 
