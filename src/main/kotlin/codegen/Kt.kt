@@ -2,6 +2,8 @@ package codegen
 
 import kotlin.reflect.KClass
 
+// transformers use these to bridge lexicon objects and code generators
+
 fun List<KtAttribute<*>>.parameters() = this.filterIsInstance<KtAttribute.KtParameter<*>>()
 fun List<KtAttribute<*>>.properties() = this.filterIsInstance<KtAttribute.KtProperty<*>>()
 
@@ -63,4 +65,39 @@ sealed interface KtAttribute<T: Any> {
             override val name: String
         ): KtProperty<T>
     }
+}
+
+data class KtFile(
+    val contents: List<KtType>,
+    val description: String,
+    val packageName: String,
+    val name: String
+) {
+    init {
+        // TODO is this necessary?
+        require(contents.isNotEmpty())
+    }
+}
+
+sealed interface KtType {
+    data class KtDataClass(
+        val attributes: List<KtAttribute<*>>,
+        val description: String? = null,
+        val name: String,
+    ): KtType
+
+    // data object
+
+    data class KtEnum(
+        val constants: List<String>,
+        val description: String? = null,
+        val name: String
+    ): KtType
+
+    data class KtTypeAlias<T: Any>(
+        val name: String,
+        val type: KClass<T>
+    ): KtType
+
+    // value class
 }

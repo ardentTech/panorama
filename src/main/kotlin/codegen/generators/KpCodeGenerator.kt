@@ -1,17 +1,13 @@
-package codegen
+package codegen.generators
 
+import codegen.*
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import kotlinx.serialization.Serializable
 import java.nio.file.Path
 import kotlin.reflect.KClass
 
-interface CodeGenerator {
-    // if this accepted a LexiconDoc instead of KtFile it would simplify the entrypoint
-    fun generate(file: KtFile) // stdout
-    // if this accepted a LexiconDoc instead of KtFile it would simplify the entrypoint
-    fun generate(destination: Path, file: KtFile) // fs
-}
+// contain all the kotlin poet details
 
 object KpCodeGenerator: CodeGenerator {
 

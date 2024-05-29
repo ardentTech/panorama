@@ -1,4 +1,4 @@
-import codegen.KpCodeGenerator
+import codegen.generators.KpCodeGenerator
 import codegen.transformers.LexiconDocTransformer
 import kotlinx.serialization.json.ClassDiscriminatorMode
 import kotlinx.serialization.json.Json
