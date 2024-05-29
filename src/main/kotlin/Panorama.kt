@@ -1,5 +1,5 @@
 import codegen.KpCodeGenerator
-import codegen.toFile
+import codegen.transformers.LexiconDocTransformer
 import kotlinx.serialization.json.ClassDiscriminatorMode
 import kotlinx.serialization.json.Json
 import lexicon.LexiconDoc
@@ -21,12 +21,12 @@ object Panorama {
     }
 
     fun codegen(doc: LexiconDoc): Result<Unit> {
-        KpCodeGenerator.generate(doc.toFile())
+        KpCodeGenerator.generate(LexiconDocTransformer.toFile(doc))
         return Result.success(Unit)
     }
 
     fun codegen(doc: LexiconDoc, destination: Path): Result<Unit> {
-        KpCodeGenerator.generate(destination, doc.toFile())
+        KpCodeGenerator.generate(destination, LexiconDocTransformer.toFile(doc))
         return Result.success(Unit)
     }
 

@@ -37,7 +37,9 @@ object KpCodeGenerator: CodeGenerator {
             .addTypes(nonAliases.map {
                 when (it) {
                     is KtType.KtDataClass -> it.toTypeSpec()
-                    // TODO other types
+                    is KtType.KtEnum -> it.toTypeSpec()
+                    // data object
+                    // value class
                     else -> throw IllegalArgumentException("Unsupported type: ${it::class.simpleName}")
                 }
             })
@@ -94,6 +96,13 @@ object KpCodeGenerator: CodeGenerator {
 
         // TODO validators
 
+        return spec.build()
+    }
+
+    private fun KtType.KtEnum.toTypeSpec(): TypeSpec {
+        val spec = TypeSpec.enumBuilder(name)
+        description?.let { spec.addKdoc(it) }
+        constants.forEach { spec.addEnumConstant(it) }
         return spec.build()
     }
 

@@ -11,7 +11,11 @@ sealed interface KtType {
 
     // data object
 
-    // enum
+    data class KtEnum(
+        val constants: List<String>,
+        val description: String? = null,
+        val name: String
+    ): KtType
 
     data class KtTypeAlias<T: Any>(
         val name: String,
