@@ -34,8 +34,8 @@ object KpCodeGenerator: CodeGenerator {
                 when (it) {
                     is KtType.KtDataClass -> it.toTypeSpec()
                     is KtType.KtEnum -> it.toTypeSpec()
-                    // data object
-                    // value class
+                    is KtType.KtDataObject -> it.toTypeSpec()
+                    is KtType.KtValueClass -> it.toTypeSpec()
                     else -> throw IllegalArgumentException("Unsupported type: ${it::class.simpleName}")
                 }
             })
@@ -45,22 +45,25 @@ object KpCodeGenerator: CodeGenerator {
     }
 
     private fun KtAttribute.KtParameter<*>.toParameterSpec(): ParameterSpec {
-        return if (this is KtAttribute.KtParameter.KtCollection<*, *>) {
-            val spec = ParameterSpec.builder(
-                name,
-                List::class.asClassName().parameterizedBy(itemCls.asTypeName()).copy(nullable = isNullable)
-            )
-            default?.let { spec.defaultValue(formatterFor(cls), it) }
-            spec.build()
-        } else if (this is KtAttribute.KtParameter.KtReference) {
-            // #localReference or path.to#globalReference
-            // package name and simple name
-            val spec = ParameterSpec.builder(name, ClassName(this.packageName, this.typeName).copy(nullable = isNullable))
-            spec.build()
-        } else {
-            val spec = ParameterSpec.builder(name, cls.asTypeName().copy(nullable = isNullable))
-            default?.let { spec.defaultValue(formatterFor(cls), it) }
-            spec.build()
+        return when (this) {
+            is KtAttribute.KtParameter.KtCollection<*, *> -> {
+                val spec = ParameterSpec.builder(
+                    name,
+                    List::class.asClassName().parameterizedBy(itemCls.asTypeName()).copy(nullable = isNullable)
+                )
+                default?.let { spec.defaultValue(formatterFor(cls), it) }
+                spec.build()
+            }
+            is KtAttribute.KtParameter.KtReference -> {
+                // #localReference or path.to#globalReference
+                // package name and simple name
+                ParameterSpec.builder(name, ClassName(this.packageName, this.typeName).copy(nullable = isNullable)).build()
+            }
+            else -> {
+                val spec = ParameterSpec.builder(name, cls.asTypeName().copy(nullable = isNullable))
+                default?.let { spec.defaultValue(formatterFor(cls), it) }
+                spec.build()
+            }
         }
     }
 
@@ -95,6 +98,15 @@ object KpCodeGenerator: CodeGenerator {
         return spec.build()
     }
 
+    private fun KtType.KtDataObject.toTypeSpec(): TypeSpec {
+        val spec = TypeSpec.objectBuilder(name)
+            .addAnnotation(Serializable::class)
+            .addModifiers(KModifier.DATA)
+        description?.let { spec.addKdoc(it) }
+        //spec.addProperties(properties) // TODO unit test
+        return spec.build()
+    }
+
     private fun KtType.KtEnum.toTypeSpec(): TypeSpec {
         val spec = TypeSpec.enumBuilder(name)
         description?.let { spec.addKdoc(it) }
@@ -103,4 +115,17 @@ object KpCodeGenerator: CodeGenerator {
     }
 
     private fun KtType.KtTypeAlias<*>.toTypeAliasSpec() = TypeAliasSpec.builder(name, type).build()
+
+    private fun KtType.KtValueClass.toTypeSpec(): TypeSpec {
+        val spec = TypeSpec.classBuilder(name)
+            .addAnnotation(Serializable::class)
+            .addAnnotation(JvmInline::class)
+            .addModifiers(KModifier.VALUE)
+        val constructor = FunSpec.constructorBuilder()
+        val param = this.parameter.toParameterSpec()
+        constructor.addParameter(param)
+        spec.addProperty(param.toProperty())
+        spec.primaryConstructor(constructor.build())
+        return spec.build()
+    }
 }

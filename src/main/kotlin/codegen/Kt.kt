@@ -72,12 +72,7 @@ data class KtFile(
     val description: String,
     val packageName: String,
     val name: String
-) {
-    init {
-        // TODO is this necessary?
-        require(contents.isNotEmpty())
-    }
-}
+)
 
 sealed interface KtType {
     data class KtDataClass(
@@ -86,7 +81,10 @@ sealed interface KtType {
         val name: String,
     ): KtType
 
-    // data object
+    data class KtDataObject(
+        val description: String? = null,
+        val name: String,
+    ): KtType
 
     data class KtEnum(
         val constants: List<String>,
@@ -99,5 +97,8 @@ sealed interface KtType {
         val type: KClass<T>
     ): KtType
 
-    // value class
+    data class KtValueClass(
+        val name: String,
+        val parameter: KtAttribute.KtParameter<*>,
+    ): KtType
 }

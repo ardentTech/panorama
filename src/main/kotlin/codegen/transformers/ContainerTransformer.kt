@@ -12,7 +12,7 @@ object ContainerTransformer {
 
     fun toType(def: LexiconObject, name: String): KtType {
         return KtType.KtDataClass(
-            def.properties.map { (k, v) -> toAttribute(v, false, k) },
+            def.properties.map { (k, v) -> toAttribute(v, def.nullable?.contains(k) == true, k) },
             def.description,
             name,
         )
@@ -46,14 +46,11 @@ object ContainerTransformer {
         return when (def) {
             is SchemaDef.Concrete -> ConcreteTransformer.toAttribute(def, isNullable, name)
             is LexiconArray -> toAttribute(def, isNullable, name)
-
             // this will need to have access to any records already created
             // i'm not sure how this will fit into KtAttribute
             is LexiconRef -> MetaTransformer.toAttribute(def, isNullable, name)
-
             is LexiconUnion -> MetaTransformer.toAttribute(def, isNullable, name)
-            // unknown
-            else -> throw IllegalArgumentException("Cannot map LexiconObject.Property ${this::class.simpleName} to KtMember")
+            is LexiconUnknown -> TODO("generics")
         }
     }
 
@@ -63,7 +60,7 @@ object ContainerTransformer {
             is LexiconBoolean -> ConcreteTransformer.toAttribute(def, false, name)
             is LexiconInteger -> ConcreteTransformer.toAttribute(def, false, name)
             is LexiconString -> ConcreteTransformer.toAttribute(def, false, name)
-            is LexiconUnknown -> TODO()
+            is LexiconUnknown -> TODO("generics")
         }
     }
 }

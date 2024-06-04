@@ -11,6 +11,7 @@ internal object LexiconDocTransformer {
         val types = mutableListOf<KtType>()
 
         doc.defs.forEach { (key, def) ->
+            println("lexicon id: ${doc.id}")
             if (key == "main") description = def.description
             types += toTypes(def, getDefName(doc.name, key))
         }
@@ -44,11 +45,11 @@ internal object LexiconDocTransformer {
         is LexiconObject -> listOf(ContainerTransformer.toType(def, name))
         is LexiconProcedure -> PrimaryTransformer.toTypes(def, name)
         is LexiconQuery -> PrimaryTransformer.toTypes(def, name)
-        // record
+        is LexiconRecord -> listOf(PrimaryTransformer.toType(def, name))
         // ref
-        // string
-        // subscription
-        // token
+        is LexiconString -> listOf(ConcreteTransformer.toType(def, name))
+        is LexiconSubscription -> PrimaryTransformer.toTypes(def, name)
+        is LexiconToken -> listOf(MetaTransformer.toDataObject(def, name))
         // union
         // unknown
         else -> throw IllegalArgumentException("Unsupported type: ${def::class.simpleName}")
