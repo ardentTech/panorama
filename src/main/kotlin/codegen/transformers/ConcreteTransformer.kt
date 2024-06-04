@@ -15,7 +15,6 @@ object ConcreteTransformer {
             is LexiconInteger -> toAttribute(def, isNullable, name)
             is LexiconNull -> toAttribute(def, isNullable, name)
             is LexiconString -> toAttribute(def, isNullable, name)
-            else -> throw IllegalArgumentException("TODO")
         }
     }
 
