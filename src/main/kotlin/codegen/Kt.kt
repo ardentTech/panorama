@@ -8,6 +8,7 @@ fun List<KtAttribute<*>>.parameters() = this.filterIsInstance<KtAttribute.KtPara
 fun List<KtAttribute<*>>.properties() = this.filterIsInstance<KtAttribute.KtProperty<*>>()
 
 // TODO figure out how to accommodate ref and union in here...
+// TODO Collection interface?
 sealed interface KtAttribute<T: Any> {
     val cls: KClass<T>
     val isNullable: Boolean
@@ -89,6 +90,13 @@ sealed interface KtType {
     data class KtEnum(
         val constants: List<String>,
         val description: String? = null,
+        val name: String
+    ): KtType
+
+    data class KtCollection<T: Any, U: Any>(
+        val cls: KClass<T>,
+        val description: String? = null,
+        val itemCls: KClass<U>,
         val name: String
     ): KtType
 

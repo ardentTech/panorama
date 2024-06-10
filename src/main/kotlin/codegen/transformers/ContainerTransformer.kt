@@ -7,7 +7,22 @@ import lexicon.*
 object ContainerTransformer {
 
     fun toType(def: LexiconArray, name: String): KtType {
-        TODO()
+        return KtType.KtCollection(
+            cls = List::class,
+            description = def.description,
+            itemCls = when (def.items) {
+                is LexiconBlob -> String::class
+                is LexiconBoolean -> Boolean::class
+                is LexiconBytes -> String::class
+                is LexiconCidLink -> String::class
+                is LexiconInteger -> Int::class
+                is LexiconRef -> String::class
+                is LexiconString -> String::class
+                is LexiconUnion -> String::class
+                is LexiconUnknown -> String::class
+            },
+            name = name
+        )
     }
 
     fun toType(def: LexiconObject, name: String): KtType {
