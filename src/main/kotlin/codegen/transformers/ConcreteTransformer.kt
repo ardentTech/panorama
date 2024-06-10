@@ -44,8 +44,7 @@ object ConcreteTransformer {
     }
 
     private fun toAttribute(def: LexiconBytes, isNullable: Boolean, name: String): KtAttribute<*> {
-        // TODO(implement)
-        return KtAttribute.KtParameter.KtItem(String::class, null, isNullable, name)
+        return KtAttribute.KtParameter.KtItem(ByteArray::class, null, isNullable, name)
     }
 
     private fun toAttribute(def: LexiconCidLink, isNullable: Boolean, name: String): KtAttribute<*> {
